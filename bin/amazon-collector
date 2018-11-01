@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+
+lib = File.expand_path("../../lib", __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+STDOUT.sync = true
+
+require "bundler/setup"
+require "amazon/collector"
+
+def parse_args
+  require 'optimist'
+  opts = Optimist::options do
+    opt :source, "Inventory Source UID", :type => :string, :required => ENV["SOURCE_UID"].nil?, :default => ENV["SOURCE_UID"]
+    opt :access_key_id, "Secret access key for the Amazon API access", :type => :string, :required => ENV["ACCESS_KEY_ID"].nil?, :default => ENV["ACCESS_KEY_ID"]
+    opt :ingress_api, "Hostname of the ingress-api route", :type => :string, :default => ENV["INGRESS_API"] || "http://localhost:9292"
+    opt :secret_access_key, "Secret access key for the Amazon API access", :type => :string, :required => ENV["SECRET_ACCESS_KEY"].nil?, :default => ENV["SECRET_ACCESS_KEY"]
+  end
+
+  opts
+end
+
+args = parse_args
+
+ingress_api_uri = URI(args[:ingress_api])
+
+TopologicalInventory::IngressApi::Client.configure.scheme = ingress_api_uri.scheme || "http"
+TopologicalInventory::IngressApi::Client.configure.host   = "#{ingress_api_uri.host}:#{ingress_api_uri.port}"
+
+collector = Amazon::Collector.new(args[:source], args[:access_key_id], args[:secret_access_key])
+# Thread.new { collector.collect! }
+collector.collect!
+
+# loop { sleep }
