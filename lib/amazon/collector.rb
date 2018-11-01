@@ -55,8 +55,8 @@ module Amazon
       count  = starting_count
 
       all_manager_uuids = []
-      eeee              = send("#{entity_type}")
-      eeee.each do |entity|
+      
+      send("#{entity_type}").each do |entity|
         all_manager_uuids << parser.send("parse_#{entity_type}", entity)
 
         parser, count = save_or_increment(parser, count)

@@ -68,7 +68,7 @@ module Amazon
         miq_exception = translate_exception(err)
         raise unless miq_exception
 
-        _log.error("Error Class=#{err.class.name}, Message=#{err.message}")
+        log.error("Error Class=#{err.class.name}, Message=#{err.message}")
         raise miq_exception
       end
 
