@@ -46,6 +46,8 @@ module Amazon
         Amazon::Iterator.new(func, "Couldn't fetch 'describe_provisioning_parameters' of service catalog.")
       end
 
+      private
+
       def describe_provisioning_parameters(product_id, artifact_id, launch_path_id)
         service_catalog_connection.client.describe_provisioning_parameters(
           :product_id               => product_id,
