@@ -13,7 +13,7 @@ module Amazon
     include Amazon::Collector::Ec2
     include Amazon::Collector::ServiceCatalog
 
-    def initialize(source, access_key_id, secret_access_key, batch_size: 1_000, poll_time: 5)
+    def initialize(source, access_key_id, secret_access_key, region, batch_size: 1_000, poll_time: 5)
       self.batch_size        = batch_size
       self.collector_threads = Concurrent::Map.new
       self.finished          = Concurrent::AtomicBoolean.new(false)
@@ -22,6 +22,7 @@ module Amazon
       self.access_key_id     = access_key_id
       self.poll_time         = poll_time
       self.queue             = Queue.new
+      self.region            = region
       self.source            = source
     end
 
@@ -43,7 +44,7 @@ module Amazon
 
     private
 
-    attr_accessor :batch_size, :collector_threads, :finished, :log,
+    attr_accessor :batch_size, :collector_threads, :finished, :log, :region,
                   :secret_access_key, :access_key_id, :poll_time, :queue, :source
 
     def finished?
@@ -55,7 +56,7 @@ module Amazon
       count  = starting_count
 
       all_manager_uuids = []
-      
+
       send("#{entity_type}").each do |entity|
         all_manager_uuids << parser.send("parse_#{entity_type}", entity)
 
@@ -101,7 +102,7 @@ module Amazon
     end
 
     def cloud_formations_entity_types
-      %w(orchetrations_stacks)
+      %w(orchestrations_stacks)
     end
 
     def service_catalog_entity_types
@@ -119,8 +120,20 @@ module Amazon
       return nil
     end
 
+    def connection_attributes
+      {:access_key_id => access_key_id, :secret_access_key => secret_access_key, :region => region}
+    end
+
     def service_catalog_connection
-      Amazon::Connection.service_catalog(access_key_id: access_key_id, secret_access_key: secret_access_key)
+      Amazon::Connection.service_catalog(connection_attributes)
+    end
+
+    def ec2_connection
+      Amazon::Connection.ec2(connection_attributes)
+    end
+
+    def cloud_formation_connection
+      Amazon::Connection.cloud_formation(connection_attributes)
     end
 
     def ingress_api_client

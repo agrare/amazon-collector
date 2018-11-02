@@ -26,7 +26,7 @@ module Amazon
         secret_access_key = options[:secret_access_key]
         service           = options[:service]
         proxy             = options[:proxy_uri]
-        region            = options[:region] || "us-east-1"
+        region            = options[:region]
 
         raw_connect(access_key_id, secret_access_key, service, region, proxy)
       end
