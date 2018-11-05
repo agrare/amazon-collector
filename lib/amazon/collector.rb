@@ -63,7 +63,7 @@ module Amazon
         parser, count = save_or_increment(parser, count)
       end
 
-      parser.collections[entity_type.to_sym].all_manager_uuids = all_manager_uuids unless all_manager_uuids.empty?
+      parser.collections[entity_type.to_sym].all_manager_uuids = all_manager_uuids
 
       return parser, count
     end
