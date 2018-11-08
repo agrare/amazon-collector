@@ -62,10 +62,8 @@ module Amazon
         send("#{entity_type}", scope).each do |entity|
           all_manager_uuids << parser.send("parse_#{entity_type}", entity, scope)
 
-          # parser, count = save_or_increment(parser, count)
+          parser, count = save_or_increment(parser, count)
         end
-
-        parser, count = save_or_increment(parser, :rest)
       end
 
       parser.collections[entity_type.to_sym].all_manager_uuids = all_manager_uuids
