@@ -1,7 +1,7 @@
 module Amazon
   class Parser
     module ServiceInstance
-      def parse_service_instances(hash)
+      def parse_service_instances(hash, scope)
         service_instance = hash[:service_instance]
         described_record = hash[:described_record]
 
@@ -21,6 +21,7 @@ module Amazon
           :source_created_at => service_instance.created_time,
           :service_offering  => service_offering,
           :service_plan      => service_plan,
+          :source_region     => lazy_find(:source_regions, :source_ref => scope[:region]),
           :extra             => {
             :arn                 => service_instance.arn,
             :type                => service_instance.type,

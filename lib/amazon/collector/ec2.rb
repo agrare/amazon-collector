@@ -1,41 +1,41 @@
 module Amazon
   class Collector
     module Ec2
-      def regions
-        ec2_connection.client.describe_regions.regions
+      def source_regions(scope)
+        ec2_connection(scope).client.describe_regions.regions
       end
 
-      def instances
-        ec2_connection.instances
+      def instances(scope)
+        ec2_connection(scope).instances
       end
 
       def flavors
         ManageIQ::Providers::Amazon::InstanceTypes.all
       end
 
-      def availability_zones
-        ec2_connection.client.describe_availability_zones[:availability_zones]
+      def availability_zones(scope)
+        ec2_connection(scope).client.describe_availability_zones[:availability_zones]
       end
 
-      def key_pairs
-        ec2_connection.client.describe_key_pairs[:key_pairs]
+      def key_pairs(scope)
+        ec2_connection(scope).client.describe_key_pairs[:key_pairs]
       end
 
-      def private_images
-        ec2_connection.client.describe_images(:owners  => [:self],
-                                              :filters => [{:name   => "image-type",
-                                                            :values => ["machine"]}]).images
+      def private_images(scope)
+        ec2_connection(scope).client.describe_images(:owners  => [:self],
+                                                     :filters => [{:name   => "image-type",
+                                                                   :values => ["machine"]}]).images
       end
 
-      def shared_images
-        ec2_connection.client.describe_images(:executable_users => [:self],
-                                              :filters          => [{:name   => "image-type",
-                                                                     :values => ["machine"]}]).images
+      def shared_images(scope)
+        ec2_connection(scope).client.describe_images(:executable_users => [:self],
+                                                     :filters          => [{:name   => "image-type",
+                                                                            :values => ["machine"]}]).images
       end
 
-      def public_images
-        ec2_connection.client.describe_images(:executable_users => [:all],
-                                              :filters          => options.to_hash[:public_images_filters]).images
+      def public_images(scope)
+        ec2_connection(scope).client.describe_images(:executable_users => [:all],
+                                                     :filters          => options.to_hash[:public_images_filters]).images
       end
     end
   end

@@ -13,7 +13,7 @@ module Amazon
     include Amazon::Collector::Ec2
     include Amazon::Collector::ServiceCatalog
 
-    def initialize(source, access_key_id, secret_access_key, region, batch_size: 1_000, poll_time: 5)
+    def initialize(source, access_key_id, secret_access_key, batch_size: 1_000, poll_time: 5)
       self.batch_size        = batch_size
       self.collector_threads = Concurrent::Map.new
       self.finished          = Concurrent::AtomicBoolean.new(false)
@@ -22,7 +22,6 @@ module Amazon
       self.access_key_id     = access_key_id
       self.poll_time         = poll_time
       self.queue             = Queue.new
-      self.region            = region
       self.source            = source
     end
 
@@ -44,7 +43,7 @@ module Amazon
 
     private
 
-    attr_accessor :batch_size, :collector_threads, :finished, :log, :region,
+    attr_accessor :batch_size, :collector_threads, :finished, :log,
                   :secret_access_key, :access_key_id, :poll_time, :queue, :source
 
     def finished?
@@ -57,10 +56,16 @@ module Amazon
 
       all_manager_uuids = []
 
-      send("#{entity_type}").each do |entity|
-        all_manager_uuids << parser.send("parse_#{entity_type}", entity)
+      ec2_connection(:region => "us-east-1").client.describe_regions.regions.each do |region|
+        scope = {:region => region.region_name}
 
-        parser, count = save_or_increment(parser, count)
+        send("#{entity_type}", scope).each do |entity|
+          all_manager_uuids << parser.send("parse_#{entity_type}", entity, scope)
+
+          # parser, count = save_or_increment(parser, count)
+        end
+
+        parser, count = save_or_increment(parser, :rest)
       end
 
       parser.collections[entity_type.to_sym].all_manager_uuids = all_manager_uuids
@@ -105,35 +110,39 @@ module Amazon
       %w(orchestrations_stacks)
     end
 
+    def ec2_entity_types
+      %w(source_regions)
+    end
+
     def service_catalog_entity_types
       %w(service_offerings service_instances service_plans)
     end
 
     def endpoint_types
-      %w(service_catalog)
+      %w(service_catalog ec2)
     end
 
-    def connection_for_entity_type(entity_type)
+    def connection_for_entity_type(entity_type, scope)
       endpoint_types.each do |endpoint|
-        return send("#{endpoint}_connection") if send("#{endpoint}_entity_types").include?(entity_type)
+        return send("#{endpoint}_connection", scope) if send("#{endpoint}_entity_types").include?(entity_type)
       end
       return nil
     end
 
     def connection_attributes
-      {:access_key_id => access_key_id, :secret_access_key => secret_access_key, :region => region}
+      {:access_key_id => access_key_id, :secret_access_key => secret_access_key}
     end
 
-    def service_catalog_connection
-      Amazon::Connection.service_catalog(connection_attributes)
+    def service_catalog_connection(scope)
+      Amazon::Connection.service_catalog(connection_attributes.merge(scope))
     end
 
-    def ec2_connection
-      Amazon::Connection.ec2(connection_attributes)
+    def ec2_connection(scope)
+      Amazon::Connection.ec2(connection_attributes.merge(scope))
     end
 
-    def cloud_formation_connection
-      Amazon::Connection.cloud_formation(connection_attributes)
+    def cloud_formation_connection(scope)
+      Amazon::Connection.cloud_formation(connection_attributes.merge(scope))
     end
 
     def ingress_api_client

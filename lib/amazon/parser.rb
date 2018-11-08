@@ -1,10 +1,12 @@
 require "active_support/inflector"
+require "amazon/parser/source_region"
 require "amazon/parser/service_offering"
 require "amazon/parser/service_plan"
 require "amazon/parser/service_instance"
 
 module Amazon
   class Parser
+    include Amazon::Parser::SourceRegion
     include Amazon::Parser::ServiceOffering
     include Amazon::Parser::ServicePlan
     include Amazon::Parser::ServiceInstance
@@ -12,12 +14,12 @@ module Amazon
     attr_accessor :connection, :collections, :resource_timestamp
 
     def initialize(connection = nil)
-      entity_types = [:service_instances, :service_offerings, :service_plans]
+      entity_types = [:source_regions, :service_instances, :service_offerings, :service_plans]
 
       self.connection         = connection
       self.resource_timestamp = Time.now.utc
       self.collections        = entity_types.each_with_object({}).each do |entity_type, collections|
-        collections[entity_type] = TopologicalInventory::IngressApi::Client::InventoryCollection.new(:name => entity_type)
+        collections[entity_type] = TopologicalInventory::IngressApi::Client::InventoryCollection.new(:name => entity_type, :data => [])
       end
     end
 

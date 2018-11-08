@@ -27,15 +27,11 @@ ingress_api_uri = URI(args[:ingress_api])
 TopologicalInventory::IngressApi::Client.configure.scheme = ingress_api_uri.scheme || "http"
 TopologicalInventory::IngressApi::Client.configure.host   = "#{ingress_api_uri.host}:#{ingress_api_uri.port}"
 
-# require 'byebug'; byebug
+loop do
 
-connection = Amazon::Connection.ec2(:access_key_id => args[:access_key_id],
-                                    :secret_access_key => args[:secret_access_key],
-                                    :region => 'us-east-1')
-connection.client.describe_regions.regions.each do |region|
-  collector = Amazon::Collector.new(args[:source], args[:access_key_id], args[:secret_access_key], region.region_name)
+  collector = Amazon::Collector.new(args[:source], args[:access_key_id], args[:secret_access_key])
   # Thread.new { collector.collect! }
   collector.collect!
-end
 
-# loop { sleep }
+  sleep(10)
+end

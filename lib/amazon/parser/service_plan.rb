@@ -1,7 +1,7 @@
 module Amazon
   class Parser
     module ServicePlan
-      def parse_service_plans(service_plan)
+      def parse_service_plans(service_plan, scope)
         launch_path = service_plan[:launch_path]
         artifact    = service_plan[:artifact]
 
@@ -11,13 +11,14 @@ module Amazon
 
         service_offering      = lazy_find(:service_offerings, :source_ref => service_offering_uid) if service_offering_uid
 
-        service_plan_data = TopologicalInventory::IngressApi::Client::ServicePlan.new(
+        topological_inventory_ingress_api_client_service_plan_new = TopologicalInventory::IngressApi::Client::ServicePlan.new(
           :source_ref         => source_ref,
           :name               => "#{service_offering_name} #{artifact.name} #{launch_path.name}",
           :description        => nil,
           :service_offering   => service_offering,
           :source_created_at  => nil,
           :create_json_schema => nil,
+          :source_region      => lazy_find(:source_regions, :source_ref => scope[:region]),
           :extra              => {
             :artifact                         => artifact,
             :launch_path                      => launch_path,
@@ -26,6 +27,7 @@ module Amazon
             :usage_instructions               => service_plan[:provisioning_parameters]&.usage_instructions,
           }
         )
+        service_plan_data                                         = topological_inventory_ingress_api_client_service_plan_new
 
         collections[:service_plans].data << service_plan_data
 
