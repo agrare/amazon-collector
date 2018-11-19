@@ -3,6 +3,7 @@ require "amazon/parser/source_region"
 require "amazon/parser/service_offering"
 require "amazon/parser/service_plan"
 require "amazon/parser/service_instance"
+require "amazon/parser/vm"
 
 module Amazon
   class Parser
@@ -10,11 +11,12 @@ module Amazon
     include Amazon::Parser::ServiceOffering
     include Amazon::Parser::ServicePlan
     include Amazon::Parser::ServiceInstance
+    include Amazon::Parser::Vm
 
     attr_accessor :connection, :collections, :resource_timestamp
 
     def initialize(connection = nil)
-      entity_types = [:source_regions, :service_instances, :service_offerings, :service_plans]
+      entity_types = [:source_regions, :service_instances, :service_offerings, :service_plans, :vms]
 
       self.connection         = connection
       self.resource_timestamp = Time.now.utc
@@ -72,6 +74,10 @@ module Amazon
       {
         :source_ref => entity.source_ref
       }
+    end
+
+    def get_from_tags(tags, tag_name)
+      tags.detect { |tag| tag.key.downcase == tag_name.to_s.downcase }&.value
     end
   end
 end

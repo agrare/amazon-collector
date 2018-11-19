@@ -5,7 +5,7 @@ module Amazon
         ec2_connection(scope).client.describe_regions.regions
       end
 
-      def instances(scope)
+      def vms(scope)
         ec2_connection(scope).instances
       end
 

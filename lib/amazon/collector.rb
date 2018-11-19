@@ -109,7 +109,7 @@ module Amazon
     end
 
     def ec2_entity_types
-      %w(source_regions)
+      %w(source_regions vms)
     end
 
     def service_catalog_entity_types
