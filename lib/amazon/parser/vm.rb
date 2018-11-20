@@ -7,6 +7,7 @@ module Amazon
 
         vm = TopologicalInventory::IngressApi::Client::Vm.new(
           :source_ref  => uid,
+          :uid_ems     => uid,
           :name        => name,
           :power_state => parse_vm_power_state(instance.state)
         )
