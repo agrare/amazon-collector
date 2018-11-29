@@ -9,6 +9,10 @@ module Amazon
         open(options.merge(:service => :CloudFormation))
       end
 
+      def pricing(options)
+        open(options.merge(:service => :Pricing))
+      end
+
       def service_catalog(options)
         open(options.merge(:service => :ServiceCatalog))
       end

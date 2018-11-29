@@ -7,7 +7,8 @@ gem "topological_inventory-ingress_api-client", :git => "https://github.com/Mana
 gem "more_core_extensions"
 
 
-gem "aws-sdk", "~>2.9.7"
+# TODO(lsmola) we should probably list what services exactly we want? (and versions) Since this loads like 50 repos
+gem "aws-sdk", "~>3.0.0"
 
 # TODO do we need these?
 # s.add_development_dependency "codeclimate-test-reporter", "~> 1.0.0"

@@ -2,14 +2,16 @@ module Amazon
   class Parser
     module Vm
       def parse_vms(instance, _scope)
-        uid  = instance.id
-        name = get_from_tags(instance.tags, :name) || uid
+        uid    = instance.id
+        name   = get_from_tags(instance.tags, :name) || uid
+        flavor = lazy_find(:flavors, :source_ref => instance.instance_type) if instance.instance_type
 
         vm = TopologicalInventory::IngressApi::Client::Vm.new(
           :source_ref  => uid,
           :uid_ems     => uid,
           :name        => name,
-          :power_state => parse_vm_power_state(instance.state)
+          :power_state => parse_vm_power_state(instance.state),
+          :flavor      => flavor,
         )
 
         collections[:vms].data << vm

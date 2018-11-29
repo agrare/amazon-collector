@@ -2,6 +2,7 @@ require "concurrent"
 require "amazon/connection"
 require "amazon/collector/cloud_formation"
 require "amazon/collector/ec2"
+require "amazon/collector/pricing"
 require "amazon/collector/service_catalog"
 require "amazon/parser"
 require "amazon/iterator"
@@ -11,6 +12,7 @@ module Amazon
   class Collector
     include Amazon::Collector::CloudFormation
     include Amazon::Collector::Ec2
+    include Amazon::Collector::Pricing
     include Amazon::Collector::ServiceCatalog
 
     def initialize(source, access_key_id, secret_access_key, batch_size: 1_000, poll_time: 5)
@@ -117,7 +119,11 @@ module Amazon
     end
 
     def endpoint_types
-      %w(service_catalog ec2)
+      %w(pricing service_catalog ec2)
+    end
+
+    def pricing_entity_types
+      %w(flavors)
     end
 
     def connection_for_entity_type(entity_type, scope)
@@ -137,6 +143,10 @@ module Amazon
 
     def ec2_connection(scope)
       Amazon::Connection.ec2(connection_attributes.merge(scope))
+    end
+
+    def pricing_connection(scope)
+      Amazon::Connection.pricing(connection_attributes.merge(scope))
     end
 
     def cloud_formation_connection(scope)
