@@ -23,8 +23,9 @@ module Amazon
 
       def flavors_query(scope, next_token: nil)
         params              = {
-          :service_code => "AmazonEC2",
-          :filters      => [
+          :format_version => "aws_v1",
+          :service_code   => "AmazonEC2",
+          :filters        => [
             {:field => "productFamily", :type => "TERM_MATCH", :value => "Compute Instance"},
             {:field => "operatingSystem", :type => "TERM_MATCH", :value => "Linux"},
             {:field => "location", :type => "TERM_MATCH", :value => "US East (N. Virginia)"},
