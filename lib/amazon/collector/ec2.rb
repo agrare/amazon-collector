@@ -37,6 +37,10 @@ module Amazon
         ec2_connection(scope).client.describe_images(:executable_users => [:all],
                                                      :filters          => options.to_hash[:public_images_filters]).images
       end
+
+      def volumes(scope)
+        ec2_connection(scope).client.describe_volumes[:volumes]
+      end
     end
   end
 end

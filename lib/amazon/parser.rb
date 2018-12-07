@@ -5,6 +5,8 @@ require "amazon/parser/service_plan"
 require "amazon/parser/service_instance"
 require "amazon/parser/flavor"
 require "amazon/parser/vm"
+require "amazon/parser/volume"
+require "amazon/parser/volume_type"
 
 module Amazon
   class Parser
@@ -14,11 +16,14 @@ module Amazon
     include Amazon::Parser::ServiceInstance
     include Amazon::Parser::Flavor
     include Amazon::Parser::Vm
+    include Amazon::Parser::Volume
+    include Amazon::Parser::VolumeType
 
     attr_accessor :connection, :collections, :resource_timestamp
 
     def initialize(connection = nil)
-      entity_types = [:source_regions, :service_instances, :service_offerings, :service_plans, :flavors, :vms]
+      entity_types = [:source_regions, :service_instances, :service_offerings, :service_plans, :flavors, :vms,
+                      :volumes, :volume_attachments, :volume_types]
 
       self.connection         = connection
       self.resource_timestamp = Time.now.utc

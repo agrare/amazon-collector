@@ -111,7 +111,7 @@ module Amazon
     end
 
     def ec2_entity_types
-      %w(source_regions vms)
+      %w(source_regions vms volumes)
     end
 
     def service_catalog_entity_types
@@ -119,11 +119,11 @@ module Amazon
     end
 
     def endpoint_types
-      %w(pricing service_catalog ec2)
+      %w(pricing ec2 service_catalog)
     end
 
     def pricing_entity_types
-      %w(flavors)
+      %w(flavors volume_types)
     end
 
     def connection_for_entity_type(entity_type, scope)
