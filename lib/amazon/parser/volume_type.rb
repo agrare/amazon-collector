@@ -24,7 +24,7 @@ module Amazon
         usage_type = data["product"]["attributes"]["usagetype"]
         match      = /.*EBS\:VolumeUsage\.(.*)$/.match(usage_type)
 
-        return 'magnetic' unless match
+        return 'standard' unless match
 
         match[1]
       end
