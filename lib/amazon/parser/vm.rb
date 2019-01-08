@@ -15,11 +15,22 @@ module Amazon
         )
 
         collections[:vms].data << vm
+        parse_vm_tags(uid, instance.tags)
 
         uid(vm)
       end
 
       private
+
+      def parse_vm_tags(vm_uid, tags)
+        tags.each do |tag|
+          collections[:vm_tags].data << TopologicalInventory::IngressApi::Client::VmTag.new(
+            :vm    => lazy_find(:vms, :source_ref => vm_uid),
+            :tag   => lazy_find(:tags, :name => tag.key),
+            :value => tag.value,
+          )
+        end
+      end
 
       def parse_vm_power_state(state)
         case state&.name
