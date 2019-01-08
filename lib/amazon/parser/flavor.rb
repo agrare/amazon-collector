@@ -40,7 +40,8 @@ module Amazon
       def parse_flavor_storage(storage)
         match = /^(\d+)\sx\s(\d+).*$/.match(storage.gsub(",", ""))
         if match
-          return match[2], match[1]
+          storage_size = (match[2].to_f * 1024 ** 3).to_i # convert GiB to B
+          return storage_size, match[1]
         else
           return 0, 0 # EBS only flavor
         end
@@ -48,7 +49,7 @@ module Amazon
 
       def parse_flavor_memory(memory)
         match = /^((\d*[.])?(\d+)).*$/.match(memory.gsub(",", ""))
-        match[1].to_f * 1024 ** 3 # convert GiB to B
+        (match[1].to_f * 1024 ** 3).to_i # convert GiB to B
       end
 
       def parse_vcpu(vcpu)
