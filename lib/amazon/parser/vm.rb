@@ -6,7 +6,7 @@ module Amazon
         name   = get_from_tags(instance.tags, :name) || uid
         flavor = lazy_find(:flavors, :source_ref => instance.instance_type) if instance.instance_type
 
-        vm = TopologicalInventory::IngressApi::Client::Vm.new(
+        vm = TopologicalInventoryIngressApiClient::Vm.new(
           :source_ref  => uid,
           :uid_ems     => uid,
           :name        => name,
@@ -24,7 +24,7 @@ module Amazon
 
       def parse_vm_tags(vm_uid, tags)
         tags.each do |tag|
-          collections[:vm_tags].data << TopologicalInventory::IngressApi::Client::VmTag.new(
+          collections[:vm_tags].data << TopologicalInventoryIngressApiClient::VmTag.new(
             :vm    => lazy_find(:vms, :source_ref => vm_uid),
             :tag   => lazy_find(:tags, :name => tag.key),
             :value => tag.value,

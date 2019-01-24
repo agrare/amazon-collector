@@ -3,7 +3,7 @@ module Amazon
     module VolumeType
       def parse_volume_types(data, _scope)
         uid         = parse_volume_type_uid(data)
-        volume_type = TopologicalInventory::IngressApi::Client::VolumeType.new(
+        volume_type = TopologicalInventoryIngressApiClient::VolumeType.new(
           :source_ref  => uid,
           :name        => uid,
           :description => "#{data["product"]["attributes"]["volumeType"]}",

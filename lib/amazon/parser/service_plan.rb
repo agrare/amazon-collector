@@ -11,7 +11,7 @@ module Amazon
 
         service_offering      = lazy_find(:service_offerings, :source_ref => service_offering_uid) if service_offering_uid
 
-        topological_inventory_ingress_api_client_service_plan_new = TopologicalInventory::IngressApi::Client::ServicePlan.new(
+        topological_inventory_ingress_api_client_service_plan_new = TopologicalInventoryIngressApiClient::ServicePlan.new(
           :source_ref         => source_ref,
           :name               => "#{service_offering_name} #{artifact.name} #{launch_path.name}",
           :description        => nil,

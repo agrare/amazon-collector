@@ -6,7 +6,7 @@ require "amazon/collector/pricing"
 require "amazon/collector/service_catalog"
 require "amazon/parser"
 require "amazon/iterator"
-require "topological_inventory/ingress_api/client"
+require "topological_inventory-ingress_api-client"
 
 module Amazon
   class Collector
@@ -93,9 +93,9 @@ module Amazon
       return if collections.empty?
 
       ingress_api_client.save_inventory(
-        :inventory => TopologicalInventory::IngressApi::Client::Inventory.new(
+        :inventory => TopologicalInventoryIngressApiClient::Inventory.new(
           :name        => "OCP",
-          :schema      => TopologicalInventory::IngressApi::Client::Schema.new(:name => "Default"),
+          :schema      => TopologicalInventoryIngressApiClient::Schema.new(:name => "Default"),
           :source      => source,
           :collections => collections,
         )
@@ -154,7 +154,7 @@ module Amazon
     end
 
     def ingress_api_client
-      TopologicalInventory::IngressApi::Client::AdminsApi.new
+      TopologicalInventoryIngressApiClient::DefaultApi.new
     end
   end
 end

@@ -5,7 +5,7 @@ module Amazon
         attributes                  = hash["product"]["attributes"]
         storage_size, storage_count = parse_flavor_storage(attributes["storage"])
 
-        service_instance = TopologicalInventory::IngressApi::Client::Flavor.new(
+        service_instance = TopologicalInventoryIngressApiClient::Flavor.new(
           :source_ref => attributes["instanceType"],
           :name       => attributes["instanceType"],
           :cpus       => parse_vcpu(attributes["vcpu"]),

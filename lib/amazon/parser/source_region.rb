@@ -2,7 +2,7 @@ module Amazon
   class Parser
     module SourceRegion
       def parse_source_regions(region, _scope)
-        region = TopologicalInventory::IngressApi::Client::SourceRegion.new(
+        region = TopologicalInventoryIngressApiClient::SourceRegion.new(
           :source_ref => region.region_name,
           :name       => region.region_name,
           :endpoint   => region.endpoint,
