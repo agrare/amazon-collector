@@ -7,6 +7,9 @@ gem "rake"
 gem "topological_inventory-ingress_api-client", :git => "https://github.com/ManageIQ/topological_inventory-ingress_api-client-ruby", :branch => "master"
 gem "more_core_extensions"
 
+group :test do
+  gem "rspec"
+end
 
 # TODO(lsmola) we should probably list what services exactly we want? (and versions) Since this loads like 50 repos
 gem "aws-sdk", "~>3.0.0"
