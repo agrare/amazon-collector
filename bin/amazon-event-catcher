@@ -34,6 +34,4 @@ collector = Amazon::EventCatcher.new(
   args[:queue_host],
   args[:queue_port]
 )
-Thread.new { collector.monitor_events! }
-
-loop { sleep }
+collector.monitor_events!
