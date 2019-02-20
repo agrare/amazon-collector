@@ -1,3 +1,11 @@
+#
+# Uses the AWS Config or CloudWatch service to monitor for events.
+#
+# AWS Config or CloudWatch events are collected in an SNS Topic.  Each appliance uses a unique
+# SQS queue subscribed to the AWS Config topic.  If the appliance-specific queue
+# doesn't exist, this event monitor will create the queue and subscribe the
+# queue to the AWS Config topic.
+
 require "amazon/connection"
 require 'aws-sdk'
 require "concurrent"
