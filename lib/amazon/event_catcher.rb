@@ -1,5 +1,5 @@
 require "amazon/connection"
-require "amazon/event_catcher_stream"
+require 'aws-sdk'
 require "concurrent"
 require "manageiq-messaging"
 
@@ -8,14 +8,14 @@ module Amazon
     class ProviderUnreachable < StandardError
     end
 
-    attr_reader :source, :sns_topic
+    attr_reader :source, :sns_topic_name
 
     def initialize(source, region, access_key_id, secret_access_key, sns_topic, queue_host, queue_port, poll_time: 20)
       self.log               = Logger.new(STDOUT)
       self.secret_access_key = secret_access_key
       self.access_key_id     = access_key_id
       self.region            = region
-      self.sns_topic         = sns_topic
+      self.sns_topic_name    = sns_topic
       self.poll_time         = poll_time
       self.queue_host        = queue_host
       self.queue_port        = queue_port
@@ -23,21 +23,11 @@ module Amazon
     end
 
     def sqs_connection(scope = {})
-      connection = Amazon::Connection.sqs(connection_attributes.merge(scope))
-      if block_given?
-        yield(connection)
-      else
-        connection
-      end
+      @sqs_connection ||= Amazon::Connection.sqs(connection_attributes.merge(scope))
     end
 
     def sns_connection(scope = {})
-      connection = Amazon::Connection.sns(connection_attributes.merge(scope))
-      if block_given?
-        yield(connection)
-      else
-        connection
-      end
+      @sns_connection ||= Amazon::Connection.sns(connection_attributes.merge(scope))
     end
 
     def monitor_events!
@@ -54,7 +44,7 @@ module Amazon
 
     attr_accessor :log, :secret_access_key, :access_key_id, :region, :poll_time, :queue, :queue_host, :queue_port
 
-    attr_writer :source, :sns_topic
+    attr_writer :source, :sns_topic_name
 
     def publish_message(message)
       messaging_client.publish_message(
@@ -88,24 +78,20 @@ module Amazon
     # :yield: array of Amazon events as hashes
     #
     def poll
-      sqs_connection do |sqs|
-        queue_poller = Aws::SQS::QueuePoller.new(
-          find_or_create_queue,
-          :client                 => sqs.client,
-          :wait_time_seconds      => 20,
+      queue_poller = Aws::SQS::QueuePoller.new(
+        find_or_create_queue,
+        :client            => sqs_connection.client,
+        :wait_time_seconds => 20,
         # :max_number_of_messages => 10
-          )
-        begin
-          queue_poller.poll do |sqs_message|
-            yield sqs_message if sqs_message
-          end
-        rescue Aws::SQS::Errors::ServiceError => exception
-          raise ProviderUnreachable, exception.message
+      )
+      begin
+        queue_poller.poll do |sqs_message|
+          yield sqs_message if sqs_message
         end
+      rescue Aws::SQS::Errors::ServiceError => exception
+        raise ProviderUnreachable, exception.message
       end
     end
-
-    private
 
     # @return [String] is a queue_url
     def find_or_create_queue
@@ -126,12 +112,10 @@ module Amazon
 
     def queue_has_policy?(queue_url, topic_arn)
       policy_attribute = 'Policy'
-      policy = sqs_connection do |sqs|
-        sqs.client.get_queue_attributes(
-          :queue_url       => queue_url,
-          :attribute_names => [policy_attribute]
-        ).attributes[policy_attribute]
-      end
+      policy           = sqs_connection.client.get_queue_attributes(
+        :queue_url       => queue_url,
+        :attribute_names => [policy_attribute]
+      ).attributes[policy_attribute]
 
       policy == queue_policy(queue_url_to_arn(queue_url), topic_arn)
     end
@@ -142,36 +126,30 @@ module Amazon
     end
 
     def sqs_create_queue(queue_name)
-      sqs_connection do |sqs|
-        sqs.client.create_queue(:queue_name => queue_name).queue_url
-      end
+      sqs_connection.client.create_queue(:queue_name => queue_name).queue_url
     end
 
     def sqs_get_queue_url(queue_name)
       # $aws_log.debug("#{log_header} Looking for Amazon SQS Queue #{queue_name} ...")
-      sqs_connection do |sqs|
-        sqs.client.get_queue_url(:queue_name => queue_name).queue_url
-      end
+      sqs_connection.client.get_queue_url(:queue_name => queue_name).queue_url
     end
 
     # @return [Aws::SNS::Topic] the found topic
     # @raise [ProviderUnreachable] in case the topic is not found
     def sns_topic
-      sns_connection do |sns|
-        get_topic(sns) || create_topic(sns)
-      end
+      @sns_topic ||= get_topic(sns_connection) || create_topic(sns_connection)
     end
 
     def get_topic(sns)
-      sns.topics.detect { |t| t.arn.split(/:/)[-1] == sns_topic }
+      sns.topics.detect { |t| t.arn.split(/:/)[-1] == sns_topic_name }
     end
 
     def create_topic(sns)
-      topic = sns.create_topic(:name => sns_topic)
-      # $aws_log.info("Created SNS topic #{sns_topic}")
+      topic = sns.create_topic(:name => sns_topic_name)
+      # $aws_log.info("Created SNS topic #{sns_topic_name}")
       topic
     rescue Aws::SNS::Errors::ServiceError => err
-      raise ProviderUnreachable, "Cannot create SNS topic #{sns_topic}, #{err.class.name}, Message=#{err.message}"
+      raise ProviderUnreachable, "Cannot create SNS topic #{sns_topic_name}, #{err.class.name}, Message=#{err.message}"
     end
 
     # @param [Aws::SNS::Topic] topic
@@ -186,24 +164,20 @@ module Amazon
       queue_arn = queue_url_to_arn(queue_url)
       policy    = queue_policy(queue_arn, topic_arn)
 
-      sqs_connection do |sqs|
-        sqs.client.set_queue_attributes(
-          :queue_url  => queue_url,
-          :attributes => {'Policy' => policy}
-        )
-      end
+      sqs_connection.client.set_queue_attributes(
+        :queue_url  => queue_url,
+        :attributes => {'Policy' => policy}
+      )
     end
 
     def queue_url_to_arn(queue_url)
-      @queue_url_to_arn ||= {}
+      @queue_url_to_arn            ||= {}
       @queue_url_to_arn[queue_url] ||= begin
         arn_attribute = "QueueArn"
-        sqs_connection do |sqs|
-          sqs.client.get_queue_attributes(
-            :queue_url       => queue_url,
-            :attribute_names => [arn_attribute]
-          ).attributes[arn_attribute]
-        end
+        sqs_connection.client.get_queue_attributes(
+          :queue_url       => queue_url,
+          :attribute_names => [arn_attribute]
+        ).attributes[arn_attribute]
       end
     end
 
