@@ -9,7 +9,7 @@ module Amazon
         volume_type = TopologicalInventoryIngressApiClient::VolumeType.new(
           :source_ref  => uid,
           :name        => uid,
-          :description => "#{attributes["volumeType"]}",
+          :description => attributes["volumeType"],
           :extra       => {
             :storageMedia  => attributes["storageMedia"],
             :volumeType    => attributes["volumeType"],
