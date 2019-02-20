@@ -25,6 +25,14 @@ module Amazon
         open(options.merge(:service => :S3))
       end
 
+      def sqs(options)
+        open(options.merge(:service => :SQS))
+      end
+
+      def sns(options)
+        open(options.merge(:service => :SNS))
+      end
+
       def open(options = {})
         access_key_id     = options[:access_key_id]
         secret_access_key = options[:secret_access_key]
