@@ -2,15 +2,13 @@ module Amazon
   class Collector
     module Ec2
       def source_regions(scope)
+        return [] unless scope[:region] == "us-east-1"
+
         ec2_connection(scope).client.describe_regions.regions
       end
 
       def vms(scope)
         ec2_connection(scope).instances
-      end
-
-      def flavors
-        ManageIQ::Providers::Amazon::InstanceTypes.all
       end
 
       def availability_zones(scope)

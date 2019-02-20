@@ -3,6 +3,8 @@ module Amazon
     module Flavor
       def parse_flavors(hash, _scope)
         attributes                  = hash["product"]["attributes"]
+        return unless attributes["instanceType"]
+
         storage_size, storage_count = parse_flavor_storage(attributes["storage"])
 
         service_instance = TopologicalInventoryIngressApiClient::Flavor.new(
@@ -14,10 +16,7 @@ module Amazon
           :memory     => parse_flavor_memory(attributes["memory"]),
           :extra      => {
             :attributes => {
-              :memory                 => attributes["memory"],
               :dedicatedEbsThroughput => attributes["dedicatedEbsThroughput"],
-              :vcpu                   => attributes["vcpu"],
-              :storage                => attributes["storage"],
               :physicalProcessor      => attributes["physicalProcessor"],
               :clockSpeed             => attributes["clockSpeed"],
               :ecu                    => attributes["ecu"],
@@ -25,7 +24,7 @@ module Amazon
               :processorFeatures      => attributes["processorFeatures"],
             },
             :prices     => {
-              :OnDemand => hash["terms"]["OnDemand"],
+              :OnDemand => hash.dig("terms", "OnDemand"),
             }
           }
         )
@@ -38,7 +37,7 @@ module Amazon
       private
 
       def parse_flavor_storage(storage)
-        match = /^(\d+)\sx\s(\d+).*$/.match(storage.gsub(",", ""))
+        match = /^(\d+)\sx\s(\d+).*$/.match(storage&.gsub(",", ""))
         if match
           storage_size = (match[2].to_f * 1024 ** 3).to_i # convert GiB to B
           return storage_size, match[1]
@@ -48,7 +47,8 @@ module Amazon
       end
 
       def parse_flavor_memory(memory)
-        match = /^((\d*[.])?(\d+)).*$/.match(memory.gsub(",", ""))
+        match = /^((\d*[.])?(\d+)).*$/.match(memory&.gsub(",", ""))
+        return 0 unless match
         (match[1].to_f * 1024 ** 3).to_i # convert GiB to B
       end
 

@@ -2,16 +2,19 @@ module Amazon
   class Parser
     module VolumeType
       def parse_volume_types(data, _scope)
-        uid         = parse_volume_type_uid(data)
+        attributes = data["product"]["attributes"]
+        return unless attributes['volumeType']
+
+        uid         = parse_volume_type_uid(attributes)
         volume_type = TopologicalInventoryIngressApiClient::VolumeType.new(
           :source_ref  => uid,
           :name        => uid,
-          :description => "#{data["product"]["attributes"]["volumeType"]}",
+          :description => attributes["volumeType"],
           :extra       => {
-            :storageMedia  => data["product"]["attributes"]["storageMedia"],
-            :volumeType    => data["product"]["attributes"]["volumeType"],
-            :maxIopsvolume => data["product"]["attributes"]["maxIopsvolume"],
-            :maxVolumeSize => data["product"]["attributes"]["maxVolumeSize"],
+            :storageMedia  => attributes["storageMedia"],
+            :volumeType    => attributes["volumeType"],
+            :maxIopsvolume => attributes["maxIopsvolume"],
+            :maxVolumeSize => attributes["maxVolumeSize"],
           }
         )
 
@@ -20,8 +23,8 @@ module Amazon
         uid(volume_type)
       end
 
-      def parse_volume_type_uid(data)
-        usage_type = data["product"]["attributes"]["usagetype"]
+      def parse_volume_type_uid(attributes)
+        usage_type = attributes["usagetype"]
         match      = /.*EBS\:VolumeUsage\.(.*)$/.match(usage_type)
 
         return 'standard' unless match

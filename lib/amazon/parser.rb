@@ -57,26 +57,6 @@ module Amazon
       )
     end
 
-    def lazy_find_namespace(name)
-      return if name.nil?
-
-      TopologicalInventoryIngressApiClient::InventoryObjectLazy.new(
-        :inventory_collection_name => :container_projects,
-        :reference                 => {:name => name},
-        :ref                       => :by_name,
-      )
-    end
-
-    def lazy_find_node(name)
-      return if name.nil?
-
-      TopologicalInventoryIngressApiClient::InventoryObjectLazy.new(
-        :inventory_collection_name => :container_nodes,
-        :reference                 => {:name => name},
-        :ref                       => :by_name,
-      )
-    end
-
     def uid(entity)
       {
         :source_ref => entity.source_ref
