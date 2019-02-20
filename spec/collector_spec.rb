@@ -1,6 +1,8 @@
 require "amazon/collector"
 require 'aws-sdk'
 require 'aws-sdk-cloudformation'
+require 'aws-sdk-servicecatalog'
+require 'aws-sdk-pricing'
 require "rspec"
 require_relative 'aws_stubs'
 require_relative 'spec_helper'
@@ -52,7 +54,6 @@ RSpec.describe Amazon::Collector do
   it "collects and parses volumes" do
     parser = collect_and_parse(:volumes)
 
-    # require 'byebug'; byebug
     expect(format(:volumes, parser)).to(
       match_array(
         [{:source_ref        => "volume_id_0",
@@ -85,6 +86,185 @@ RSpec.describe Amazon::Collector do
     )
   end
 
+  it "collects and parses source_regions" do
+    parser = collect_and_parse(:source_regions)
+
+    expect(format(:source_regions, parser)).to(
+      match_array(
+        [{:source_ref => "us-east-1", :name => "us-east-1"},
+         {:source_ref => "us-west-1", :name => "us-west-1"}]
+      )
+    )
+  end
+
+  it "collects and parses service_offerings" do
+    parser = collect_and_parse(:service_offerings)
+
+    expect(format(:service_offerings, parser)).to(
+      match_array(
+        [{:source_ref        => "prod_0",
+          :name              => "name_0",
+          :source_created_at => Time.parse("2016-08-10 14:42:09 UTC").utc,
+          :source_region     =>
+            {:inventory_collection_name => :source_regions,
+             :reference                 => {:source_ref => "us-east-1"},
+             :ref                       => :manager_ref}},
+         {:source_ref        => "prod_0",
+          :name              => "name_0",
+          :source_created_at => Time.parse("2016-08-10 14:42:09 UTC").utc,
+          :source_region     =>
+            {:inventory_collection_name => :source_regions,
+             :reference                 => {:source_ref => "us-west-1"},
+             :ref                       => :manager_ref}}]
+      )
+    )
+  end
+
+  it "collects and parses service_instances" do
+    parser = collect_and_parse(:service_instances)
+
+    expect(format(:service_instances, parser)).to(
+      match_array(
+        [{:source_ref        => "id_0",
+          :source_created_at => Time.parse("2016-08-10 14:42:01 UTC").utc,
+          :service_offering  =>
+            {:inventory_collection_name => :service_offerings,
+             :reference                 => {:source_ref => "prod_1"},
+             :ref                       => :manager_ref},
+          :service_plan      =>
+            {:inventory_collection_name => :service_plans,
+             :reference                 => {:source_ref => "prod_1__provisioning_artifact_1__path_1"},
+             :ref                       => :manager_ref},
+          :source_region     =>
+            {:inventory_collection_name => :source_regions,
+             :reference                 => {:source_ref => "us-east-1"},
+             :ref                       => :manager_ref}},
+         {:source_ref        => "id_0",
+          :source_created_at => Time.parse("2016-08-10 14:42:01 UTC").utc,
+          :service_offering  =>
+            {:inventory_collection_name => :service_offerings,
+             :reference                 => {:source_ref => "prod_1"},
+             :ref                       => :manager_ref},
+          :service_plan      =>
+            {:inventory_collection_name => :service_plans,
+             :reference                 => {:source_ref => "prod_1__provisioning_artifact_1__path_1"},
+             :ref                       => :manager_ref},
+          :source_region     =>
+            {:inventory_collection_name => :source_regions,
+             :reference                 => {:source_ref => "us-west-1"},
+             :ref                       => :manager_ref}}]
+      )
+    )
+  end
+
+  it "collects and parses service_plans" do
+    parser = collect_and_parse(:service_plans)
+
+    expect(format(:service_plans, parser)).to(
+      match_array(
+        [{:source_ref       => "prod_0__provisioning_artifact_1__path_1",
+          :name             => "name_0 provisioning_artifact_1_name path_1_name",
+          :service_offering =>
+            {:inventory_collection_name => :service_offerings,
+             :reference                 => {:source_ref => "prod_0"},
+             :ref                       => :manager_ref},
+          :source_region    =>
+            {:inventory_collection_name => :source_regions,
+             :reference                 => {:source_ref => "us-east-1"},
+             :ref                       => :manager_ref}},
+         {:source_ref       => "prod_0__provisioning_artifact_1__path_1",
+          :name             => "name_0 provisioning_artifact_1_name path_1_name",
+          :service_offering =>
+            {:inventory_collection_name => :service_offerings,
+             :reference                 => {:source_ref => "prod_0"},
+             :ref                       => :manager_ref},
+          :source_region    =>
+            {:inventory_collection_name => :source_regions,
+             :reference                 => {:source_ref => "us-west-1"},
+             :ref                       => :manager_ref}}]
+      )
+    )
+  end
+
+  it "collects and parses flavors" do
+    parser = collect_and_parse(:flavors)
+
+    expect(format(:flavors, parser)).to(
+      match_array(
+        [{:source_ref => "m5d.12xlarge",
+          :name       => "m5d.12xlarge",
+          :disk_size  => 966367641600,
+          :disk_count => "2",
+          :memory     => 206158430208,
+          :cpus       => 48,
+          :extra      =>
+            {:attributes =>
+               {:dedicatedEbsThroughput => "6000 Mbps",
+                :physicalProcessor      => "Intel Xeon Platinum 8175",
+                :clockSpeed             => "2.5 GHz",
+                :ecu                    => "173",
+                :networkPerformance     => "10 Gigabit",
+                :processorFeatures      => "Intel AVX, Intel AVX2, Intel AVX512, Intel Turbo"},
+             :prices     =>
+               {:OnDemand =>
+                  {"22PCVUMSTSHECWJD.JRTCKXETXF" =>
+                     {"sku"             => "22PCVUMSTSHECWJD",
+                      "effectiveDate"   => "2018-12-01T00:00:00Z",
+                      "offerTermCode"   => "JRTCKXETXF",
+                      "termAttributes"  => {},
+                      "priceDimensions" =>
+                        {"22PCVUMSTSHECWJD.JRTCKXETXF.6YS6EN2CT7" =>
+                           {"unit"         => "Hrs",
+                            "endRange"     => "Inf",
+                            "rateCode"     => "22PCVUMSTSHECWJD.JRTCKXETXF.6YS6EN2CT7",
+                            "appliesTo"    => [],
+                            "beginRange"   => "0",
+                            "description"  =>
+                              "$2.712 per On Demand Linux m5d.12xlarge Instance Hour",
+                            "pricePerUnit" => {"USD" => "2.7120000000"}}}}}}}},
+         {:source_ref => "t1.micro",
+          :name       => "t1.micro",
+          :disk_size  => 0,
+          :disk_count => 0,
+          :memory     => 2064805527552,
+          :cpus       => 48,
+          :extra      =>
+            {:attributes =>
+               {:dedicatedEbsThroughput => "6000 Mbps",
+                :physicalProcessor      => "Intel Xeon Platinum 8175",
+                :clockSpeed             => "2.5 GHz",
+                :ecu                    => "173",
+                :networkPerformance     => "10 Gigabit",
+                :processorFeatures      => "Intel AVX, Intel AVX2, Intel AVX512, Intel Turbo"},
+             :prices     => {:OnDemand => nil}}}]
+      )
+    )
+  end
+
+  it "collects and parses volume_types" do
+    parser = collect_and_parse(:volume_types)
+
+    expect(format(:volume_types, parser)).to(
+      match_array(
+        [{:source_ref  => "standard",
+          :name        => "standard",
+          :description => "Magnetic",
+          :extra       =>
+            {:storageMedia  => "HDD-backed",
+             :volumeType    => "Magnetic",
+             :maxIopsvolume => "40 - 200",
+             :maxVolumeSize => "1 TiB"}},
+         {:source_ref  => "gp2",
+          :name        => "gp2",
+          :description => "General Purpose",
+          :extra       =>
+            {:storageMedia  => "SSD-backed",
+             :volumeType    => "General Purpose",
+             :maxIopsvolume => "16000",
+             :maxVolumeSize => "16 TiB"}}]
+      )
+    )
+  end
 
   def collect_and_parse(entity)
     parser = Amazon::Parser.new
@@ -131,6 +311,16 @@ RSpec.describe Amazon::Collector do
       :cloudformation => {
         :describe_stacks      => mocked_stacks,
         :list_stack_resources => mocked_stack_resources
+      },
+      :servicecatalog => {
+        :search_products_as_admin  => mocked_products,
+        :scan_provisioned_products => mocked_provisioned_products,
+        :describe_record           => mocked_describe_record,
+        :describe_product          => mocked_describe_product,
+        :list_launch_paths         => mocked_list_launch_paths,
+      },
+      :pricing        => {
+        :get_products => mocked_pricing_products,
       }
     }
   end

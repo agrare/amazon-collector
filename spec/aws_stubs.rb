@@ -28,7 +28,9 @@ module AwsStubs
       :cloud_volume_count                              => scaling * 1,
       :cloud_volume_snapshot_count                     => scaling * 1,
       :s3_buckets_count                                => scaling * 1,
-      :s3_objects_per_bucket_count                     => scaling * 1
+      :s3_objects_per_bucket_count                     => scaling * 1,
+      :products                                        => scaling * 1,
+      :provisioned_products                            => scaling * 1,
     }
   end
 
@@ -43,6 +45,202 @@ module AwsStubs
       }
     end
     {:addresses => floating_ips}
+  end
+
+  def mocked_products
+    products = []
+
+    test_counts[:products].times do |i|
+      products << {
+        :product_view_summary => {
+          :product_id => "prod_#{i}",
+          :name       => "name_#{i}",
+        },
+        :status               => "",
+        :product_arn          => "arn_#{i}",
+        :created_time         => Time.parse("2016-08-10 14:42:09 UTC").utc
+      }
+    end
+
+    {:product_view_details => products}
+  end
+
+  def mocked_provisioned_products
+    provisioned_products = []
+    test_counts[:provisioned_products].times do |i|
+      provisioned_products << {
+        :id                => "id_#{i}",
+        :arn               => "arn_#{i}",
+        :type              => "type_#{i}",
+        :status            => "status",
+        :status_message    => "status_message",
+        :idempotency_token => "idempotency_token",
+        :last_record_id    => "last_record_id",
+        :created_time      => Time.parse("2016-08-10 14:42:01 UTC").utc
+      }
+    end
+
+    {:provisioned_products => provisioned_products}
+  end
+
+  def mocked_describe_record
+    {
+      :record_detail => {
+        :product_id               => "prod_1",
+        :path_id                  => "path_1",
+        :provisioning_artifact_id => "provisioning_artifact_1"
+      }
+    }
+  end
+
+  def mocked_describe_product
+    {
+      :provisioning_artifacts => [
+        {
+          :id   => "provisioning_artifact_1",
+          :name => "provisioning_artifact_1_name",
+        }
+      ]
+    }
+  end
+
+  def mocked_list_launch_paths
+    {
+      :launch_path_summaries => [
+        {
+          :id   => "path_1",
+          :name => "path_1_name",
+        }
+      ]
+    }
+  end
+
+  def mocked_pricing_products
+    {
+      :price_list => [
+        {
+          :product => {
+            :attributes => {
+              "instanceType"           => "m5d.12xlarge",
+              "vcpu"                   => "2",
+              "ecu"                    => "173",
+              "vcpu"                   => "48",
+              "memory"                 => "192 GiB",
+              "storage"                => "2 x 900 NVMe SSD",
+              "clockSpeed"             => "2.5 GHz",
+              "physicalProcessor"      => "Intel Xeon Platinum 8175",
+              "processorFeatures"      => "Intel AVX, Intel AVX2, Intel AVX512, Intel Turbo",
+              "networkPerformance"     => "10 Gigabit",
+              "dedicatedEbsThroughput" => "6000 Mbps"
+            }
+          },
+          "terms"  =>
+            {"OnDemand" =>
+               {"22PCVUMSTSHECWJD.JRTCKXETXF" =>
+                  {"sku"             => "22PCVUMSTSHECWJD",
+                   "effectiveDate"   => "2018-12-01T00:00:00Z",
+                   "offerTermCode"   => "JRTCKXETXF",
+                   "termAttributes"  => {},
+                   "priceDimensions" =>
+                     {"22PCVUMSTSHECWJD.JRTCKXETXF.6YS6EN2CT7" =>
+                        {"unit"         => "Hrs",
+                         "endRange"     => "Inf",
+                         "rateCode"     => "22PCVUMSTSHECWJD.JRTCKXETXF.6YS6EN2CT7",
+                         "appliesTo"    => [],
+                         "beginRange"   => "0",
+                         "description"  => "$2.712 per On Demand Linux m5d.12xlarge Instance Hour",
+                         "pricePerUnit" => {"USD" => "2.7120000000"}}}}}}
+        }.to_json, {
+          :product => {
+            :attributes => {
+              "instanceType"           => "t1.micro",
+              "vcpu"                   => "2",
+              "ecu"                    => "173",
+              "vcpu"                   => "48",
+              "memory"                 => "192,3 GiB",
+              "storage"                => "900 NVMe SSD",
+              "clockSpeed"             => "2.5 GHz",
+              "physicalProcessor"      => "Intel Xeon Platinum 8175",
+              "processorFeatures"      => "Intel AVX, Intel AVX2, Intel AVX512, Intel Turbo",
+              "networkPerformance"     => "10 Gigabit",
+              "dedicatedEbsThroughput" => "6000 Mbps"}
+          }
+        }.to_json, {"product"         =>
+                      {"productFamily" => "Storage",
+                       "attributes"    =>
+                         {"storageMedia"            => "HDD-backed",
+                          "maxThroughputvolume"     => "40 - 90 MB/sec",
+                          "volumeType"              => "Magnetic",
+                          "maxIopsvolume"           => "40 - 200",
+                          "servicecode"             => "AmazonEC2",
+                          "usagetype"               => "EBS:VolumeUsage",
+                          "locationType"            => "AWS Region",
+                          "location"                => "US East (N. Virginia)",
+                          "servicename"             => "Amazon Elastic Compute Cloud",
+                          "maxVolumeSize"           => "1 TiB",
+                          "operation"               => "",
+                          "maxIopsBurstPerformance" => "Hundreds"},
+                       "sku"           => "269VXUCZZ7E6JNXT"},
+                    "serviceCode"     => "AmazonEC2",
+                    "terms"           =>
+                      {"OnDemand" =>
+                         {"269VXUCZZ7E6JNXT.JRTCKXETXF" =>
+                            {"priceDimensions" =>
+                               {"269VXUCZZ7E6JNXT.JRTCKXETXF.6YS6EN2CT7" =>
+                                  {"unit"         => "GB-Mo",
+                                   "endRange"     => "Inf",
+                                   "description"  =>
+                                     "$0.05 per GB-month of Magnetic provisioned storage - US East (Northern Virginia)",
+                                   "appliesTo"    => [],
+                                   "rateCode"     => "269VXUCZZ7E6JNXT.JRTCKXETXF.6YS6EN2CT7",
+                                   "beginRange"   => "0",
+                                   "pricePerUnit" => {"USD" => "0.0500000000"}}},
+                             "sku"             => "269VXUCZZ7E6JNXT",
+                             "effectiveDate"   => "2019-02-01T00:00:00Z",
+                             "offerTermCode"   => "JRTCKXETXF",
+                             "termAttributes"  => {}}}},
+                    "version"         => "20190215225445",
+                    "publicationDate" => "2019-02-15T22:54:45Z"
+        }.to_json, {
+          "product"         =>
+            {"productFamily" => "Storage",
+             "attributes"    =>
+               {"storageMedia"            => "SSD-backed",
+                "maxThroughputvolume"     => "250 MiB/s",
+                "volumeType"              => "General Purpose",
+                "maxIopsvolume"           => "16000",
+                "servicecode"             => "AmazonEC2",
+                "usagetype"               => "EBS:VolumeUsage.gp2",
+                "locationType"            => "AWS Region",
+                "location"                => "US East (N. Virginia)",
+                "servicename"             => "Amazon Elastic Compute Cloud",
+                "maxVolumeSize"           => "16 TiB",
+                "operation"               => "",
+                "maxIopsBurstPerformance" => "3000 for volumes <= 1 TiB"},
+             "sku"           => "HY3BZPP2B6K8MSJF"},
+          "serviceCode"     => "AmazonEC2",
+          "terms"           =>
+            {"OnDemand" =>
+               {"HY3BZPP2B6K8MSJF.JRTCKXETXF" =>
+                  {"priceDimensions" =>
+                     {"HY3BZPP2B6K8MSJF.JRTCKXETXF.6YS6EN2CT7" =>
+                        {"unit"         => "GB-Mo",
+                         "endRange"     => "Inf",
+                         "description"  =>
+                           "$0.10 per GB-month of General Purpose SSD (gp2) provisioned storage - US East (Northern Virginia)",
+                         "appliesTo"    => [],
+                         "rateCode"     => "HY3BZPP2B6K8MSJF.JRTCKXETXF.6YS6EN2CT7",
+                         "beginRange"   => "0",
+                         "pricePerUnit" => {"USD" => "0.1000000000"}}},
+                   "sku"             => "HY3BZPP2B6K8MSJF",
+                   "effectiveDate"   => "2019-02-01T00:00:00Z",
+                   "offerTermCode"   => "JRTCKXETXF",
+                   "termAttributes"  => {}}}},
+          "version"         => "20190215225445",
+          "publicationDate" => "2019-02-15T22:54:45Z"
+        }.to_json
+      ]
+    }
   end
 
   def mocked_network_ports
@@ -221,7 +419,7 @@ module AwsStubs
         :stack_id      => "stack_id_#{i}",
         :description   => "stack_dec_#{i}",
         :stack_status  => 'CREATE_COMPLETE',
-        :creation_time => Time.now,
+        :creation_time => Time.now.utc,
         :parameters    => mocked_stack_parameters,
         :outputs       => mocked_stack_outputs
       }
@@ -239,7 +437,7 @@ module AwsStubs
           :physical_resource_id   => ":stack/stack_name_#{stack_index}-stack_id_#{stack_index}/stack_physical_resource_id_#{i}",
           :logical_resource_id    => "logical_resource_id_#{i}",
           :resource_type          => "AWS::EC2::InternetGateway",
-          :last_updated_timestamp => Time.now,
+          :last_updated_timestamp => Time.now.utc,
           :resource_status        => 'CREATE_COMPLETE'
         }
       end
@@ -362,7 +560,7 @@ module AwsStubs
       lb.health_check                  = health_check.to_h
       lb.source_security_group         = source_security_group.to_h
       lb.security_groups               = ["sg-0d2cd677"]
-      lb.created_time                  = Time.parse("2016-08-10 14:17:09 UTC")
+      lb.created_time                  = Time.parse("2016-08-10 14:17:09 UTC").utc
       lb.scheme                        = "internet-facing"
       mocked_lbs << lb.to_h
     end
@@ -417,7 +615,7 @@ module AwsStubs
         :volume_id         => "volume_id_#{i}",
         :volume_type       => "standard",
         :snapshot_id       => "snapshot_id_#{i}",
-        :tags              => [{ :key => "name", :value => "volume_#{i}" }],
+        :tags              => [{:key => "name", :value => "volume_#{i}"}],
         :iops              => (i == 0 ? 100 : nil),
         :encrypted         => (i == 0 ? true : false),
       }
@@ -425,18 +623,18 @@ module AwsStubs
 
     unless mocked_cloud_volumes.empty?
       # Attach the first cloud volume to a specific instance.
-      volume_with_attachment = mocked_cloud_volumes[0]
+      volume_with_attachment               = mocked_cloud_volumes[0]
       volume_with_attachment[:attachments] = [{
-        :volume_id             => "volume_id_0",
-        :instance_id           => "instance_0",
-        :device                => "/dev/sda1",
-        :state                 => "attached",
-        :attach_time           => Time.parse("2019-02-20 09:54:48 UTC").utc,
-        :delete_on_termination => true
-      }]
+                                                :volume_id             => "volume_id_0",
+                                                :instance_id           => "instance_0",
+                                                :device                => "/dev/sda1",
+                                                :state                 => "attached",
+                                                :attach_time           => Time.parse("2019-02-20 09:54:48 UTC").utc,
+                                                :delete_on_termination => true
+                                              }]
     end
 
-    { :volumes => mocked_cloud_volumes }
+    {:volumes => mocked_cloud_volumes}
   end
 
   def mocked_cloud_volume_snapshots
@@ -445,15 +643,15 @@ module AwsStubs
       mocked_cloud_volume_snapshots << {
         :snapshot_id => "snapshot_id_#{i}",
         :description => "snapshot_desc_#{i}",
-        :start_time  => Time.now,
+        :start_time  => Time.now.utc,
         :volume_size => 1,
         :state       => "completed",
         :volume_id   => "volume_id_#{i}",
-        :tags        => [{ :key => "name", :value => "snapshot_#{i}" }],
+        :tags        => [{:key => "name", :value => "snapshot_#{i}"}],
         :encrypted   => (i == 0 ? true : false),
       }
     end
 
-    { :snapshots => mocked_cloud_volume_snapshots }
+    {:snapshots => mocked_cloud_volume_snapshots}
   end
 end
