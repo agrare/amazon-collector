@@ -48,7 +48,7 @@ module Amazon
 
       def parse_flavor_memory(memory)
         match = /^((\d*[.])?(\d+)).*$/.match(memory&.gsub(",", ""))
-        return 0 unless match
+        return unless match
 
         (match[1].to_f * 1024**3).to_i # convert GiB to B
       end
