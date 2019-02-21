@@ -2,7 +2,7 @@ module Amazon
   class Parser
     module Flavor
       def parse_flavors(hash, _scope)
-        attributes = hash["product"]["attributes"]
+        attributes = hash.dig("product", "attributes") || {}
         return unless attributes["instanceType"]
 
         storage_size, storage_count = parse_flavor_storage(attributes["storage"])
