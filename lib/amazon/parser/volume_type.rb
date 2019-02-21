@@ -2,7 +2,7 @@ module Amazon
   class Parser
     module VolumeType
       def parse_volume_types(data, _scope)
-        attributes = data["product"]["attributes"]
+        attributes = data.dig("product", "attributes") || {}
         return unless attributes['volumeType']
 
         uid         = parse_volume_type_uid(attributes)

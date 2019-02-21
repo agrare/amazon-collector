@@ -18,12 +18,13 @@ module Amazon
       #  "Elastic Graphics"]
 
       def flavors(scope)
-        # TODO(lsmola) should we have flavor per region?
-        return [] unless scope[:region] == "us-east-1"
+        # TODO(lsmola) should we have flavor per region? Are there region specific flavors?
+        # We want to collect this for only default region, since all regions return the same result
+        return [] unless scope[:region] == default_region
 
         func = lambda do |&blk|
           result = flavors_query(scope)
-          while 1
+          loop do
             result.price_list.each do |flavor|
               parsed_flavor = JSON.parse(flavor)
               blk.call(parsed_flavor, scope)
@@ -38,12 +39,13 @@ module Amazon
       end
 
       def volume_types(scope)
-        # TODO(lsmola) should we have volume_type per region?
-        return [] unless scope[:region] == "us-east-1"
+        # TODO(lsmola) should we have volume_type per region? Are there region specific volume types?
+        # We want to collect this for only default region, since all regions return the same result
+        return [] unless scope[:region] == default_region
 
         func = lambda do |&blk|
           result = volume_types_query(scope)
-          while 1
+          loop do
             result.price_list.each do |volume_type|
               parsed_volume_type = JSON.parse(volume_type)
               blk.call(parsed_volume_type, scope)
@@ -60,7 +62,7 @@ module Amazon
       private
 
       def flavors_query(scope, next_token: nil)
-        params              = {
+        params = {
           :format_version => "aws_v1",
           :service_code   => "AmazonEC2",
           :filters        => [
@@ -78,7 +80,7 @@ module Amazon
       end
 
       def volume_types_query(scope, next_token: nil)
-        params              = {
+        params = {
           :format_version => "aws_v1",
           :service_code   => "AmazonEC2",
           :filters        => [

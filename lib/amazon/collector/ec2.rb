@@ -2,7 +2,8 @@ module Amazon
   class Collector
     module Ec2
       def source_regions(scope)
-        return [] unless scope[:region] == "us-east-1"
+        # We want to collect this for only default region, since all regions return the same result
+        return [] unless scope[:region] == default_region
 
         ec2_connection(scope).client.describe_regions.regions
       end

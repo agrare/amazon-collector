@@ -22,8 +22,8 @@ module Amazon
     attr_accessor :connection, :collections, :resource_timestamp
 
     def initialize(connection = nil)
-      entity_types = [:source_regions, :service_instances, :service_offerings, :service_plans, :flavors, :vms, :vm_tags,
-                      :volumes, :volume_attachments, :volume_types]
+      entity_types = %i(source_regions service_instances service_offerings service_plans flavors vms vm_tags
+                        volumes volume_attachments volume_types)
 
       self.connection         = connection
       self.resource_timestamp = Time.now.utc
