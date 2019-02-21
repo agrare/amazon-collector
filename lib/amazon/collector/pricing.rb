@@ -23,7 +23,7 @@ module Amazon
 
         func = lambda do |&blk|
           result = flavors_query(scope)
-          while 1
+          loop do
             result.price_list.each do |flavor|
               parsed_flavor = JSON.parse(flavor)
               blk.call(parsed_flavor, scope)
@@ -43,7 +43,7 @@ module Amazon
 
         func = lambda do |&blk|
           result = volume_types_query(scope)
-          while 1
+          loop do
             result.price_list.each do |volume_type|
               parsed_volume_type = JSON.parse(volume_type)
               blk.call(parsed_volume_type, scope)
@@ -60,7 +60,7 @@ module Amazon
       private
 
       def flavors_query(scope, next_token: nil)
-        params              = {
+        params = {
           :format_version => "aws_v1",
           :service_code   => "AmazonEC2",
           :filters        => [
@@ -78,7 +78,7 @@ module Amazon
       end
 
       def volume_types_query(scope, next_token: nil)
-        params              = {
+        params = {
           :format_version => "aws_v1",
           :service_code   => "AmazonEC2",
           :filters        => [

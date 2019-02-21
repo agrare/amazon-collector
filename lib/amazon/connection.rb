@@ -41,7 +41,7 @@ module Amazon
         require 'aws-sdk'
         # require 'patches/aws-sdk-core/seahorse_client_net_http_pool_patch'
 
-        options            = {
+        options = {
           :access_key_id     => access_key_id,
           :secret_access_key => secret_access_key,
           :region            => region,

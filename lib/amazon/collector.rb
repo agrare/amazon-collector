@@ -61,7 +61,7 @@ module Amazon
       ec2_connection(:region => "us-east-1").client.describe_regions.regions.each do |region|
         scope = {:region => region.region_name}
 
-        send("#{entity_type}", scope).each do |entity|
+        send(entity_type.to_s, scope).each do |entity|
           all_manager_uuids << parser.send("parse_#{entity_type}", entity, scope)
 
           parser, count = save_or_increment(parser, count)
@@ -130,7 +130,7 @@ module Amazon
       endpoint_types.each do |endpoint|
         return send("#{endpoint}_connection", scope) if send("#{endpoint}_entity_types").include?(entity_type)
       end
-      return nil
+      nil
     end
 
     def connection_attributes

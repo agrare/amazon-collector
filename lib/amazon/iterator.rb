@@ -8,9 +8,9 @@ module Amazon
       @log           = Logger.new(STDOUT)
     end
 
-    def each(&blk)
+    def each
       block.call do |entity|
-        blk.call(entity)
+        yield(entity)
       end
     rescue => e
       log.warn("#{error_message}. Message: #{e.message}")

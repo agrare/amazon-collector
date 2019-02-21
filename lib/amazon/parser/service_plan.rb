@@ -27,7 +27,7 @@ module Amazon
             :usage_instructions               => service_plan[:provisioning_parameters]&.usage_instructions,
           }
         )
-        service_plan_data                                         = topological_inventory_ingress_api_client_service_plan_new
+        service_plan_data = topological_inventory_ingress_api_client_service_plan_new
 
         collections[:service_plans].data << service_plan_data
 
