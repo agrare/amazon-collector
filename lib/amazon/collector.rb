@@ -58,7 +58,7 @@ module Amazon
 
       all_manager_uuids = []
 
-      ec2_connection(:region => "us-east-1").client.describe_regions.regions.each do |region|
+      ec2_connection(:region => default_region).client.describe_regions.regions.each do |region|
         scope = {:region => region.region_name}
 
         send(entity_type.to_s, scope).each do |entity|
@@ -155,6 +155,10 @@ module Amazon
 
     def ingress_api_client
       TopologicalInventoryIngressApiClient::DefaultApi.new
+    end
+
+    def default_region
+      "us-east-1"
     end
   end
 end
