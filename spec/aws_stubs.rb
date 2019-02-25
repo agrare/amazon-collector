@@ -364,7 +364,8 @@ module AwsStubs
         ],
         :network_interfaces => [
           {
-            :network_interface_id => "interface_#{i}"
+            :network_interface_id => "interface_#{i}",
+            :mac_address          => "06:d5:e7:4e:c8:01",
           }
         ]
       }

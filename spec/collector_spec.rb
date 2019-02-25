@@ -15,38 +15,42 @@ RSpec.describe Amazon::Collector do
 
     expect(format_hash(:vms, parser)).to(
       match_array(
-        [{:source_ref  => "instance_0",
-          :uid_ems     => "instance_0",
-          :name        => "instance_0",
-          :power_state => "on",
-          :flavor      =>
-                          {:inventory_collection_name => :flavors,
-                           :reference                 => {:source_ref => "m3.medium"},
-                           :ref                       => :manager_ref}},
-         {:source_ref  => "instance_ec2_0",
-          :uid_ems     => "instance_ec2_0",
-          :name        => "instance_ec2_0",
-          :power_state => "on",
-          :flavor      =>
-                          {:inventory_collection_name => :flavors,
-                           :reference                 => {:source_ref => "m3.medium"},
-                           :ref                       => :manager_ref}},
-         {:source_ref  => "instance_0",
-          :uid_ems     => "instance_0",
-          :name        => "instance_0",
-          :power_state => "on",
-          :flavor      =>
-                          {:inventory_collection_name => :flavors,
-                           :reference                 => {:source_ref => "m3.medium"},
-                           :ref                       => :manager_ref}},
-         {:source_ref  => "instance_ec2_0",
-          :uid_ems     => "instance_ec2_0",
-          :name        => "instance_ec2_0",
-          :power_state => "on",
-          :flavor      =>
-                          {:inventory_collection_name => :flavors,
-                           :reference                 => {:source_ref => "m3.medium"},
-                           :ref                       => :manager_ref}}]
+        [{:source_ref    => "instance_0",
+          :uid_ems       => "instance_0",
+          :name          => "instance_0",
+          :power_state   => "on",
+          :mac_addresses => ["06:d5:e7:4e:c8:01"],
+          :flavor        =>
+            {:inventory_collection_name => :flavors,
+             :reference                 => {:source_ref => "m3.medium"},
+             :ref                       => :manager_ref}},
+         {:source_ref    => "instance_ec2_0",
+          :uid_ems       => "instance_ec2_0",
+          :name          => "instance_ec2_0",
+          :power_state   => "on",
+          :mac_addresses => [],
+          :flavor        =>
+            {:inventory_collection_name => :flavors,
+             :reference                 => {:source_ref => "m3.medium"},
+             :ref                       => :manager_ref}},
+         {:source_ref    => "instance_0",
+          :uid_ems       => "instance_0",
+          :name          => "instance_0",
+          :power_state   => "on",
+          :mac_addresses => ["06:d5:e7:4e:c8:01"],
+          :flavor        =>
+            {:inventory_collection_name => :flavors,
+             :reference                 => {:source_ref => "m3.medium"},
+             :ref                       => :manager_ref}},
+         {:source_ref    => "instance_ec2_0",
+          :uid_ems       => "instance_ec2_0",
+          :name          => "instance_ec2_0",
+          :power_state   => "on",
+          :mac_addresses => [],
+          :flavor        =>
+            {:inventory_collection_name => :flavors,
+             :reference                 => {:source_ref => "m3.medium"},
+             :ref                       => :manager_ref}}]
       )
     )
   end
