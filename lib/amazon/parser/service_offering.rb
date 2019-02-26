@@ -2,7 +2,7 @@ module Amazon
   class Parser
     module ServiceOffering
       def parse_service_offerings(service_offering, scope)
-        service_offering = TopologicalInventory::IngressApi::Client::ServiceOffering.new(
+        service_offering = TopologicalInventoryIngressApiClient::ServiceOffering.new(
           :source_ref        => service_offering.product_view_summary.product_id,
           :name              => service_offering.product_view_summary.name,
           :description       => nil,

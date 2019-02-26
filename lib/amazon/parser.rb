@@ -22,13 +22,13 @@ module Amazon
     attr_accessor :connection, :collections, :resource_timestamp
 
     def initialize(connection = nil)
-      entity_types = [:source_regions, :service_instances, :service_offerings, :service_plans, :flavors, :vms,
-                      :volumes, :volume_attachments, :volume_types]
+      entity_types = %i(source_regions service_instances service_offerings service_plans flavors vms vm_tags
+                        volumes volume_attachments volume_types)
 
       self.connection         = connection
       self.resource_timestamp = Time.now.utc
       self.collections        = entity_types.each_with_object({}).each do |entity_type, collections|
-        collections[entity_type] = TopologicalInventory::IngressApi::Client::InventoryCollection.new(:name => entity_type, :data => [])
+        collections[entity_type] = TopologicalInventoryIngressApiClient::InventoryCollection.new(:name => entity_type, :data => [])
       end
     end
 
@@ -50,30 +50,10 @@ module Amazon
     end
 
     def lazy_find(collection, reference, ref: :manager_ref)
-      TopologicalInventory::IngressApi::Client::InventoryObjectLazy.new(
+      TopologicalInventoryIngressApiClient::InventoryObjectLazy.new(
         :inventory_collection_name => collection,
         :reference                 => reference,
         :ref                       => ref,
-      )
-    end
-
-    def lazy_find_namespace(name)
-      return if name.nil?
-
-      TopologicalInventory::IngressApi::Client::InventoryObjectLazy.new(
-        :inventory_collection_name => :container_projects,
-        :reference                 => {:name => name},
-        :ref                       => :by_name,
-      )
-    end
-
-    def lazy_find_node(name)
-      return if name.nil?
-
-      TopologicalInventory::IngressApi::Client::InventoryObjectLazy.new(
-        :inventory_collection_name => :container_nodes,
-        :reference                 => {:name => name},
-        :ref                       => :by_name,
       )
     end
 

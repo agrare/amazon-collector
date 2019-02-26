@@ -6,7 +6,7 @@ require "amazon/collector/pricing"
 require "amazon/collector/service_catalog"
 require "amazon/parser"
 require "amazon/iterator"
-require "topological_inventory/ingress_api/client"
+require "topological_inventory-ingress_api-client"
 
 module Amazon
   class Collector
@@ -58,10 +58,10 @@ module Amazon
 
       all_manager_uuids = []
 
-      ec2_connection(:region => "us-east-1").client.describe_regions.regions.each do |region|
+      ec2_connection(:region => default_region).client.describe_regions.regions.each do |region|
         scope = {:region => region.region_name}
 
-        send("#{entity_type}", scope).each do |entity|
+        send(entity_type.to_s, scope).each do |entity|
           all_manager_uuids << parser.send("parse_#{entity_type}", entity, scope)
 
           parser, count = save_or_increment(parser, count)
@@ -93,9 +93,9 @@ module Amazon
       return if collections.empty?
 
       ingress_api_client.save_inventory(
-        :inventory => TopologicalInventory::IngressApi::Client::Inventory.new(
+        :inventory => TopologicalInventoryIngressApiClient::Inventory.new(
           :name        => "OCP",
-          :schema      => TopologicalInventory::IngressApi::Client::Schema.new(:name => "Default"),
+          :schema      => TopologicalInventoryIngressApiClient::Schema.new(:name => "Default"),
           :source      => source,
           :collections => collections,
         )
@@ -130,7 +130,7 @@ module Amazon
       endpoint_types.each do |endpoint|
         return send("#{endpoint}_connection", scope) if send("#{endpoint}_entity_types").include?(entity_type)
       end
-      return nil
+      nil
     end
 
     def connection_attributes
@@ -154,7 +154,11 @@ module Amazon
     end
 
     def ingress_api_client
-      TopologicalInventory::IngressApi::Client::AdminsApi.new
+      TopologicalInventoryIngressApiClient::DefaultApi.new
+    end
+
+    def default_region
+      "us-east-1"
     end
   end
 end

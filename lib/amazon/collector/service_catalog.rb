@@ -31,7 +31,7 @@ module Amazon
 
             launch_paths.each do |launch_path|
               artifacts.each do |artifact|
-                plan                           = {
+                plan = {
                   :artifact         => artifact,
                   :launch_path      => launch_path,
                   :service_offering => service_offering

@@ -2,15 +2,14 @@ module Amazon
   class Collector
     module Ec2
       def source_regions(scope)
+        # We want to collect this for only default region, since all regions return the same result
+        return [] unless scope[:region] == default_region
+
         ec2_connection(scope).client.describe_regions.regions
       end
 
       def vms(scope)
         ec2_connection(scope).instances
-      end
-
-      def flavors
-        ManageIQ::Providers::Amazon::InstanceTypes.all
       end
 
       def availability_zones(scope)

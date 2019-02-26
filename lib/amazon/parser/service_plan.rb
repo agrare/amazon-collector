@@ -8,10 +8,9 @@ module Amazon
         service_offering_uid  = service_plan[:service_offering].product_view_summary.product_id
         service_offering_name = service_plan[:service_offering].product_view_summary.name
         source_ref            = "#{service_offering_uid}__#{artifact.id}__#{launch_path.id}"
-
         service_offering      = lazy_find(:service_offerings, :source_ref => service_offering_uid) if service_offering_uid
 
-        topological_inventory_ingress_api_client_service_plan_new = TopologicalInventory::IngressApi::Client::ServicePlan.new(
+        service_plan_data = TopologicalInventoryIngressApiClient::ServicePlan.new(
           :source_ref         => source_ref,
           :name               => "#{service_offering_name} #{artifact.name} #{launch_path.name}",
           :description        => nil,
@@ -27,7 +26,6 @@ module Amazon
             :usage_instructions               => service_plan[:provisioning_parameters]&.usage_instructions,
           }
         )
-        service_plan_data                                         = topological_inventory_ingress_api_client_service_plan_new
 
         collections[:service_plans].data << service_plan_data
 
