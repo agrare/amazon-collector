@@ -33,7 +33,7 @@ module Amazon
           :public_ip_addresses  => [],
         }
 
-        (instance&.network_interfaces || []).each do |interface|
+        (instance.network_interfaces || []).each do |interface|
           network[:mac_addresses] << interface.mac_address
           interface.private_ip_addresses.each do |private_ip|
             network[:private_ip_addresses] << private_ip.private_ip_address
