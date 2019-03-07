@@ -106,20 +106,38 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
 
     expect(format_hash(:service_offerings, parser)).to(
       match_array(
-        [{:source_ref        => "prod_0",
-          :name              => "name_0",
-          :source_created_at => Time.parse("2016-08-10 14:42:09 UTC").utc,
-          :source_region     =>
-                                {:inventory_collection_name => :source_regions,
-                                 :reference                 => {:source_ref => "us-east-1"},
-                                 :ref                       => :manager_ref}},
-         {:source_ref        => "prod_0",
-          :name              => "name_0",
-          :source_created_at => Time.parse("2016-08-10 14:42:09 UTC").utc,
-          :source_region     =>
-                                {:inventory_collection_name => :source_regions,
-                                 :reference                 => {:source_ref => "us-west-1"},
-                                 :ref                       => :manager_ref}}]
+        [
+          {
+            :extra             => {
+              :product_view_summary => {:name=>"name_0", :product_id=>"prod_0"},
+              :status               => "",
+              :product_arn          => "arn_0",
+            },
+            :source_ref        => "prod_0",
+            :name              => "name_0",
+            :source_created_at => Time.parse("2016-08-10 14:42:09 UTC").utc,
+            :source_region     => {
+              :inventory_collection_name => :source_regions,
+              :reference                 => {:source_ref => "us-east-1"},
+              :ref                       => :manager_ref
+            }
+          },
+          {
+            :extra             => {
+              :product_view_summary => {:name=>"name_0", :product_id=>"prod_0"},
+              :status               => "",
+              :product_arn          => "arn_0",
+            },
+            :source_ref        => "prod_0",
+            :name              => "name_0",
+            :source_created_at => Time.parse("2016-08-10 14:42:09 UTC").utc,
+            :source_region     => {
+              :inventory_collection_name => :source_regions,
+              :reference                 => {:source_ref => "us-west-1"},
+              :ref                       => :manager_ref
+            }
+          }
+        ]
       )
     )
   end
