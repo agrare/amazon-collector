@@ -1,4 +1,4 @@
-module Amazon
+module TopologicalInventory::Amazon
   class Parser
     module Flavor
       def parse_flavors(hash, _scope)

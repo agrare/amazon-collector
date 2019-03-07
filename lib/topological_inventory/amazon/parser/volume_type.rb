@@ -1,4 +1,4 @@
-module Amazon
+module TopologicalInventory::Amazon
   class Parser
     module VolumeType
       def parse_volume_types(data, _scope)

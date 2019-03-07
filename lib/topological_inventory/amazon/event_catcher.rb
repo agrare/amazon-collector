@@ -6,12 +6,12 @@
 # doesn't exist, this event monitor will create the queue and subscribe the
 # queue to the AWS Config topic.
 
-require "amazon/connection"
+require "topological_inventory/amazon/connection"
 require 'aws-sdk'
 require "concurrent"
 require "manageiq-messaging"
 
-module Amazon
+module TopologicalInventory::Amazon
   class EventCatcher
     class ProviderUnreachable < StandardError
     end
@@ -31,11 +31,11 @@ module Amazon
     end
 
     def sqs_connection(scope = {})
-      @sqs_connection ||= Amazon::Connection.sqs(connection_attributes.merge(scope))
+      @sqs_connection ||= Connection.sqs(connection_attributes.merge(scope))
     end
 
     def sns_connection(scope = {})
-      @sns_connection ||= Amazon::Connection.sns(connection_attributes.merge(scope))
+      @sns_connection ||= Connection.sns(connection_attributes.merge(scope))
     end
 
     def monitor_events!

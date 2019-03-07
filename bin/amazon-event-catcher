@@ -6,7 +6,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 STDOUT.sync = true
 
 require "bundler/setup"
-require "amazon/event_catcher"
+require "topological_inventory/amazon/event_catcher"
 
 def parse_args
   require 'optimist'
@@ -25,7 +25,7 @@ end
 
 args = parse_args
 
-collector = Amazon::EventCatcher.new(
+collector = TopologicalInventory::Amazon::EventCatcher.new(
   args[:source],
   args[:region],
   args[:access_key_id],

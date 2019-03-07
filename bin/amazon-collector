@@ -6,7 +6,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 STDOUT.sync = true
 
 require "bundler/setup"
-require "amazon/collector"
+require "topological_inventory/amazon/collector"
 
 def parse_args
   require 'optimist'
@@ -33,8 +33,7 @@ TopologicalInventoryIngressApiClient.configure.host   = "#{ingress_api_uri.host}
 
 loop do
 
-  collector = Amazon::Collector.new(args[:source], args[:access_key_id], args[:secret_access_key])
-  # Thread.new { collector.collect! }
+  collector = TopologicalInventory::Amazon::Collector.new(args[:source], args[:access_key_id], args[:secret_access_key])
   collector.collect!
 
   sleep(10)

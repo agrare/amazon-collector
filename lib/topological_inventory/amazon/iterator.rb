@@ -1,4 +1,4 @@
-module Amazon
+module TopologicalInventory::Amazon
   class Iterator
     attr_reader :block, :error_message, :log
 

@@ -1,4 +1,4 @@
-module Amazon
+module TopologicalInventory::Amazon
   class Parser
     module ServiceOffering
       def parse_service_offerings(service_offering, scope)

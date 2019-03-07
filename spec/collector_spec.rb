@@ -1,4 +1,4 @@
-require "amazon/collector"
+require "topological_inventory/amazon/collector"
 require 'aws-sdk'
 require 'aws-sdk-cloudformation'
 require 'aws-sdk-servicecatalog'
@@ -7,7 +7,7 @@ require "rspec"
 require_relative 'aws_stubs'
 require_relative 'spec_helper'
 
-RSpec.describe Amazon::Collector do
+RSpec.describe TopologicalInventory::Amazon::Collector do
   include AwsStubs
 
   it "collects and parses vms" do
@@ -277,10 +277,10 @@ RSpec.describe Amazon::Collector do
   end
 
   def collect_and_parse(entity)
-    parser = Amazon::Parser.new
+    parser = TopologicalInventory::Amazon::Parser.new
     with_aws_stubbed(stub_responses) do
-      Amazon::Collector.new("source", "access_key_id", "secret_access_key")
-                       .send(:process_entity, entity, parser, 1)
+      TopologicalInventory::Amazon::Collector.new("source", "access_key_id", "secret_access_key")
+                                             .send(:process_entity, entity, parser, 1)
     end
     parser
   end
