@@ -1,4 +1,4 @@
-module Amazon
+module TopologicalInventory::Amazon
   class Parser
     module ServiceInstance
       def parse_service_instances(hash, scope)

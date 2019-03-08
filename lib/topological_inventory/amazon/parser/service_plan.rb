@@ -1,4 +1,4 @@
-module Amazon
+module TopologicalInventory::Amazon
   class Parser
     module ServicePlan
       def parse_service_plans(service_plan, scope)

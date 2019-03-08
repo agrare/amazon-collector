@@ -1,4 +1,4 @@
-module Amazon
+module TopologicalInventory::Amazon
   class Parser
     module SourceRegion
       def parse_source_regions(region, _scope)
