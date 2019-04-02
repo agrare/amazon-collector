@@ -5,6 +5,7 @@ require File.join(Bundler::Plugin.index.load_paths("bundler-inject")[0], "bundle
 
 gem "activesupport", "~> 5.2.2"
 gem "concurrent-ruby"
+gem "manageiq-loggers", "~> 0.1.1"
 gem 'manageiq-messaging'
 gem "more_core_extensions"
 gem "optimist"
