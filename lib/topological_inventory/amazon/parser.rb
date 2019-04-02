@@ -7,6 +7,9 @@ require "topological_inventory/amazon/parser/flavor"
 require "topological_inventory/amazon/parser/vm"
 require "topological_inventory/amazon/parser/volume"
 require "topological_inventory/amazon/parser/volume_type"
+require "topological_inventory-ingress_api-client"
+require "topological_inventory-ingress_api-client/collector.rb"
+require "topological_inventory-ingress_api-client/collector/inventory_collection_storage.rb"
 
 module TopologicalInventory
   module Amazon
@@ -23,14 +26,9 @@ module TopologicalInventory
       attr_accessor :connection, :collections, :resource_timestamp
 
       def initialize(connection = nil)
-        entity_types = %i(source_regions service_instances service_offerings service_plans flavors vms vm_tags
-                          volumes volume_attachments volume_types)
-
         self.connection         = connection
         self.resource_timestamp = Time.now.utc
-        self.collections        = entity_types.each_with_object({}).each do |entity_type, collections|
-          collections[entity_type] = TopologicalInventoryIngressApiClient::InventoryCollection.new(:name => entity_type, :data => [])
-        end
+        self.collections = TopologicalInventoryIngressApiClient::Collector::InventoryCollectionStorage.new
       end
 
       private
@@ -56,12 +54,6 @@ module TopologicalInventory
           :reference                 => reference,
           :ref                       => ref,
         )
-      end
-
-      def uid(entity)
-        {
-          :source_ref => entity.source_ref
-        }
       end
 
       def get_from_tags(tags, tag_name)
