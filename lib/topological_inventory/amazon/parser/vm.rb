@@ -17,8 +17,6 @@ module TopologicalInventory::Amazon
 
         collections[:vms].data << vm
         parse_vm_tags(uid, instance.tags)
-
-        uid(vm)
       end
 
       private

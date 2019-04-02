@@ -16,8 +16,6 @@ module TopologicalInventory::Amazon
         )
 
         collections[:service_offerings].data << service_offering
-
-        uid(service_offering)
       end
     end
   end

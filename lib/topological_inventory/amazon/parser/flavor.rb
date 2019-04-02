@@ -30,8 +30,6 @@ module TopologicalInventory::Amazon
         )
 
         collections[:flavors].data << service_instance
-
-        uid(service_instance)
       end
 
       private
