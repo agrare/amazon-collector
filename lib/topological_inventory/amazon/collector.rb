@@ -6,11 +6,14 @@ require "topological_inventory/amazon/collector/pricing"
 require "topological_inventory/amazon/collector/service_catalog"
 require "topological_inventory/amazon/parser"
 require "topological_inventory/amazon/iterator"
+require "topological_inventory/amazon/logging"
 require "topological_inventory-ingress_api-client"
 
 module TopologicalInventory
   module Amazon
     class Collector
+      include Logging
+
       include Amazon::Collector::CloudFormation
       include Amazon::Collector::Ec2
       include Amazon::Collector::Pricing
@@ -20,7 +23,6 @@ module TopologicalInventory
         self.batch_size        = batch_size
         self.collector_threads = Concurrent::Map.new
         self.finished          = Concurrent::AtomicBoolean.new(false)
-        self.log               = Logger.new(STDOUT)
         self.secret_access_key = secret_access_key
         self.access_key_id     = access_key_id
         self.poll_time         = poll_time
@@ -29,15 +31,9 @@ module TopologicalInventory
       end
 
       def collect!
-        parser = Parser.new
-        count  = 1
-
         entity_types.each do |entity_type|
-          log.info("Starting collection for #{entity_type}...")
-          parser, count = process_entity(entity_type, parser, count)
+          process_entity(entity_type)
         end
-
-        save_or_increment(parser, :rest)
       end
 
       def stop
@@ -53,52 +49,83 @@ module TopologicalInventory
         finished.value
       end
 
-      def process_entity(entity_type, starting_parser, starting_count)
-        parser = starting_parser
-        count  = starting_count
+      def process_entity(entity_type)
+        parser      = create_parser
+        total_parts = 0
+        sweep_scope = Set.new([entity_type.to_sym])
 
-        all_manager_uuids = []
+        refresh_state_uuid = SecureRandom.uuid
+        logger.info("Collecting #{entity_type} with :refresh_state_uuid => '#{refresh_state_uuid}'...")
 
+        count = 0
         ec2_connection(:region => default_region).client.describe_regions.regions.each do |region|
           scope = {:region => region.region_name}
 
           send(entity_type.to_s, scope).each do |entity|
-            all_manager_uuids << parser.send("parse_#{entity_type}", entity, scope)
+            count += 1
+            parser.send("parse_#{entity_type}", entity, scope)
 
-            parser, count = save_or_increment(parser, count)
+            if count >= batch_size
+              count                   = 0
+              refresh_state_part_uuid = SecureRandom.uuid
+              total_parts             += 1
+
+              save_inventory(parser.collections.values, refresh_state_uuid, refresh_state_part_uuid)
+              sweep_scope.merge(parser.collections.values.map(&:name))
+
+              parser = create_parser
+            end
           end
         end
 
-        parser.collections[entity_type.to_sym].all_manager_uuids = all_manager_uuids
+        if count > 0
+          # Save the rest
+          refresh_state_part_uuid = SecureRandom.uuid
+          total_parts             += 1
 
-        return parser, count
-      end
-
-      def save_or_increment(parser, count)
-        if count == :rest || count >= batch_size
-          log.info("Sending batch to to persister queue...")
-          save_inventory(parser.collections.values)
-
-          # And and create new persistor so the old one with data can be GCed
-          return_parser = Parser.new
-          return_count  = 1
-        else
-          return_parser = parser
-          return_count  = count + 1
+          save_inventory(parser.collections.values, refresh_state_uuid, refresh_state_part_uuid)
+          sweep_scope.merge(parser.collections.values.map(&:name))
         end
 
-        return return_parser, return_count
+        logger.info("Collecting #{entity_type} with :refresh_state_uuid => '#{refresh_state_uuid}'...Complete - Parts [#{total_parts}]")
+
+        sweep_scope = sweep_scope.to_a
+        logger.info("Sweeping inactive records for #{sweep_scope} with :refresh_state_uuid => '#{refresh_state_uuid}'...")
+
+        sweep_inventory(refresh_state_uuid, total_parts, sweep_scope)
+
+        logger.info("Sweeping inactive records for #{sweep_scope} with :refresh_state_uuid => '#{refresh_state_uuid}'...Complete")
       end
 
-      def save_inventory(collections)
+      def create_parser
+        Parser.new
+      end
+
+      def save_inventory(collections, refresh_state_uuid = nil, refresh_state_part_uuid = nil)
         return if collections.empty?
 
         ingress_api_client.save_inventory(
           :inventory => TopologicalInventoryIngressApiClient::Inventory.new(
-            :name        => "OCP",
-            :schema      => TopologicalInventoryIngressApiClient::Schema.new(:name => "Default"),
-            :source      => source,
-            :collections => collections,
+            :name                    => "Amazon",
+            :schema                  => TopologicalInventoryIngressApiClient::Schema.new(:name => "Default"),
+            :source                  => source,
+            :collections             => collections,
+            :refresh_state_uuid      => refresh_state_uuid,
+            :refresh_state_part_uuid => refresh_state_part_uuid,
+          )
+        )
+      end
+
+      def sweep_inventory(refresh_state_uuid, total_parts, sweep_scope)
+        ingress_api_client.save_inventory(
+          :inventory => TopologicalInventoryIngressApiClient::Inventory.new(
+            :name               => "Amazon",
+            :schema             => TopologicalInventoryIngressApiClient::Schema.new(:name => "Default"),
+            :source             => source,
+            :collections        => [],
+            :refresh_state_uuid => refresh_state_uuid,
+            :total_parts        => total_parts,
+            :sweep_scope        => sweep_scope,
           )
         )
       end

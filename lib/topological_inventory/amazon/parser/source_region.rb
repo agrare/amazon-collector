@@ -9,8 +9,6 @@ module TopologicalInventory::Amazon
         )
 
         collections[:source_regions].data << region
-
-        uid(region)
       end
     end
   end

@@ -19,8 +19,6 @@ module TopologicalInventory::Amazon
         )
 
         collections[:volume_types].data << volume_type
-
-        uid(volume_type)
       end
 
       def parse_volume_type_uid(attributes)

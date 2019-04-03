@@ -14,8 +14,6 @@ module TopologicalInventory::Amazon
 
         collections[:volumes].data << volume
         parse_volume_attachments(data)
-
-        uid(volume)
       end
 
       private
