@@ -50,7 +50,7 @@ module TopologicalInventory
       end
 
       def process_entity(entity_type)
-        parser      = Parser.new
+        parser      = create_parser
         total_parts = 0
         sweep_scope = Set.new([entity_type.to_sym])
 
@@ -73,7 +73,7 @@ module TopologicalInventory
               save_inventory(parser.collections.values, refresh_state_uuid, refresh_state_part_uuid)
               sweep_scope.merge(parser.collections.values.map(&:name))
 
-              parser = Parser.new
+              parser = create_parser
             end
           end
         end
@@ -95,6 +95,10 @@ module TopologicalInventory
         sweep_inventory(refresh_state_uuid, total_parts, sweep_scope)
 
         logger.info("Sweeping inactive records for #{sweep_scope} with :refresh_state_uuid => '#{refresh_state_uuid}'...Complete")
+      end
+
+      def create_parser
+        Parser.new
       end
 
       def save_inventory(collections, refresh_state_uuid = nil, refresh_state_part_uuid = nil)
