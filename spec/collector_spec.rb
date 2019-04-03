@@ -3,9 +3,7 @@ require 'aws-sdk'
 require 'aws-sdk-cloudformation'
 require 'aws-sdk-servicecatalog'
 require 'aws-sdk-pricing'
-require "rspec"
 require_relative 'aws_stubs'
-require_relative 'spec_helper'
 
 RSpec.describe TopologicalInventory::Amazon::Collector do
   include AwsStubs

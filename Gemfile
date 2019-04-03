@@ -12,8 +12,9 @@ gem "optimist"
 gem "rake"
 gem "topological_inventory-ingress_api-client", :git => "https://github.com/ManageIQ/topological_inventory-ingress_api-client-ruby", :branch => "master"
 
-group :test do
+group :test, :devlopment do
   gem "rspec"
+  gem "simplecov"
 end
 
 # TODO(lsmola) we should probably list what services exactly we want? (and versions) Since this loads like 50 repos
