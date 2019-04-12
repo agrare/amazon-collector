@@ -31,8 +31,16 @@ module TopologicalInventory
       end
 
       def collect!
-        entity_types.each do |entity_type|
-          process_entity(entity_type)
+        loop do
+          begin
+            entity_types.each do |entity_type|
+              process_entity(entity_type)
+            end
+          rescue => e
+            logger.error(e)
+          ensure
+            sleep(30)
+          end
         end
       end
 
@@ -114,6 +122,9 @@ module TopologicalInventory
             :refresh_state_part_uuid => refresh_state_part_uuid,
           )
         )
+      rescue TopologicalInventoryIngressApiClient::ApiError => e
+        logger.error("Error when sending payload to Ingress API. Error message: #{e.message}. Error headers: #{e.response_headers}")
+        raise
       end
 
       def sweep_inventory(refresh_state_uuid, total_parts, sweep_scope)
@@ -128,6 +139,9 @@ module TopologicalInventory
             :sweep_scope        => sweep_scope,
           )
         )
+      rescue TopologicalInventoryIngressApiClient::ApiError => e
+        logger.error("Error when sending payload to Ingress API. Error message: #{e.message}. Error headers: #{e.response_headers}")
+        raise
       end
 
       def entity_types
