@@ -122,8 +122,8 @@ module TopologicalInventory
             :refresh_state_part_uuid => refresh_state_part_uuid,
           )
         )
-      rescue => e
-        logger.error("Error when sending payload to Ingress API. Error message: #{e.message}. Error headers: #{e&.response_headers}")
+      rescue TopologicalInventoryIngressApiClient::ApiError => e
+        logger.error("Error when sending payload to Ingress API. Error message: #{e.message}. Error headers: #{e.response_headers}")
         raise
       end
 
@@ -139,8 +139,8 @@ module TopologicalInventory
             :sweep_scope        => sweep_scope,
           )
         )
-      rescue => e
-        logger.error("Error when sending payload to Ingress API. Error message: #{e.message}. Error headers: #{e&.response_headers}")
+      rescue TopologicalInventoryIngressApiClient::ApiError => e
+        logger.error("Error when sending payload to Ingress API. Error message: #{e.message}. Error headers: #{e.response_headers}")
         raise
       end
 
