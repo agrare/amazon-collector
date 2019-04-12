@@ -124,7 +124,7 @@ module TopologicalInventory
         )
       rescue => e
         logger.error("Error when sending payload to Ingress API. Error message: #{e.message}. Error headers: #{e&.response_headers}")
-        raise e
+        raise
       end
 
       def sweep_inventory(refresh_state_uuid, total_parts, sweep_scope)
@@ -141,7 +141,7 @@ module TopologicalInventory
         )
       rescue => e
         logger.error("Error when sending payload to Ingress API. Error message: #{e.message}. Error headers: #{e&.response_headers}")
-        raise e
+        raise
       end
 
       def entity_types
