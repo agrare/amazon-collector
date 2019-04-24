@@ -48,7 +48,7 @@ module Amazon
         tags.each do |tag|
           collections[:vm_tags].data << TopologicalInventoryIngressApiClient::VmTag.new(
             :vm    => lazy_find(:vms, :source_ref => vm_uid),
-            :tag   => lazy_find(:tags, :name => tag.key),
+            :tag   => lazy_find(:tags, :name => tag.key, :namespace => "amazon"),
             :value => tag.value,
           )
         end
