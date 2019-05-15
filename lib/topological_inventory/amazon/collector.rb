@@ -8,6 +8,7 @@ require "topological_inventory/amazon/parser"
 require "topological_inventory/amazon/iterator"
 require "topological_inventory/amazon/logging"
 require "topological_inventory-ingress_api-client"
+require "topological_inventory-ingress_api-client/save_inventory/saver"
 
 module TopologicalInventory
   module Amazon
@@ -76,9 +77,7 @@ module TopologicalInventory
             if count >= batch_size
               count                   = 0
               refresh_state_part_uuid = SecureRandom.uuid
-              total_parts             += 1
-
-              save_inventory(parser.collections.values, refresh_state_uuid, refresh_state_part_uuid)
+              total_parts             += save_inventory(parser.collections.values, refresh_state_uuid, refresh_state_part_uuid)
               sweep_scope.merge(parser.collections.values.map(&:name))
 
               parser = create_parser
@@ -89,9 +88,7 @@ module TopologicalInventory
         if count > 0
           # Save the rest
           refresh_state_part_uuid = SecureRandom.uuid
-          total_parts             += 1
-
-          save_inventory(parser.collections.values, refresh_state_uuid, refresh_state_part_uuid)
+          total_parts             += save_inventory(parser.collections.values, refresh_state_uuid, refresh_state_part_uuid)
           sweep_scope.merge(parser.collections.values.map(&:name))
         end
 
@@ -110,9 +107,9 @@ module TopologicalInventory
       end
 
       def save_inventory(collections, refresh_state_uuid = nil, refresh_state_part_uuid = nil)
-        return if collections.empty?
+        return 0 if collections.empty?
 
-        ingress_api_client.save_inventory(
+        TopologicalInventoryIngressApiClient::SaveInventory::Saver.new(:client => ingress_api_client, :logger => logger).save(
           :inventory => TopologicalInventoryIngressApiClient::Inventory.new(
             :name                    => "Amazon",
             :schema                  => TopologicalInventoryIngressApiClient::Schema.new(:name => "Default"),
@@ -128,7 +125,7 @@ module TopologicalInventory
       end
 
       def sweep_inventory(refresh_state_uuid, total_parts, sweep_scope)
-        ingress_api_client.save_inventory(
+        TopologicalInventoryIngressApiClient::SaveInventory::Saver.new(:client => ingress_api_client, :logger => logger).save(
           :inventory => TopologicalInventoryIngressApiClient::Inventory.new(
             :name               => "Amazon",
             :schema             => TopologicalInventoryIngressApiClient::Schema.new(:name => "Default"),
