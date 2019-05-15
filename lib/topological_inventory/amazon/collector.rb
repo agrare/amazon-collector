@@ -20,12 +20,13 @@ module TopologicalInventory
       include Amazon::Collector::Pricing
       include Amazon::Collector::ServiceCatalog
 
-      def initialize(source, access_key_id, secret_access_key, batch_size: 1_000, poll_time: 5)
+      def initialize(source, access_key_id, secret_access_key, metrics, batch_size: 1_000, poll_time: 5)
         self.batch_size        = batch_size
         self.collector_threads = Concurrent::Map.new
         self.finished          = Concurrent::AtomicBoolean.new(false)
         self.secret_access_key = secret_access_key
         self.access_key_id     = access_key_id
+        self.metrics           = metrics
         self.poll_time         = poll_time
         self.queue             = Queue.new
         self.source            = source
@@ -39,6 +40,7 @@ module TopologicalInventory
             end
           rescue => e
             logger.error(e)
+            metrics.record_error
           ensure
             sleep(30)
           end
@@ -51,7 +53,7 @@ module TopologicalInventory
 
       private
 
-      attr_accessor :batch_size, :collector_threads, :finished, :log,
+      attr_accessor :batch_size, :collector_threads, :finished, :log, :metrics,
                     :secret_access_key, :access_key_id, :poll_time, :queue, :source
 
       def finished?
