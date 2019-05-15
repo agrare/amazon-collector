@@ -7,6 +7,7 @@ STDOUT.sync = true
 
 require "bundler/setup"
 require "topological_inventory/amazon/collector"
+require "topological_inventory/amazon/collector/application_metrics"
 
 def parse_args
   require 'optimist'
@@ -31,5 +32,10 @@ ingress_api_uri = URI(args[:ingress_api])
 TopologicalInventoryIngressApiClient.configure.scheme = ingress_api_uri.scheme || "http"
 TopologicalInventoryIngressApiClient.configure.host   = "#{ingress_api_uri.host}:#{ingress_api_uri.port}"
 
-collector = TopologicalInventory::Amazon::Collector.new(args[:source], args[:access_key_id], args[:secret_access_key])
-collector.collect!
+begin
+  metrics = TopologicalInventory::Amazon::Collector::ApplicationMetrics.new
+  collector = TopologicalInventory::Amazon::Collector.new(args[:source], args[:access_key_id], args[:secret_access_key])
+  collector.collect!
+ensure
+  metrics.stop_server
+end

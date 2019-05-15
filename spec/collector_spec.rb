@@ -1,4 +1,5 @@
 require "topological_inventory/amazon/collector"
+require "topological_inventory/amazon/collector/application_metrics"
 require 'aws-sdk'
 require 'aws-sdk-cloudformation'
 require 'aws-sdk-servicecatalog'
@@ -299,9 +300,11 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
 
   def collect_and_parse(entity)
     parser = TopologicalInventory::Amazon::Parser.new
+    metrics = instance_double(TopologicalInventory::Amazon::Collector::ApplicationMetrics,
+                              :record_error => nil)
 
     collector = TopologicalInventory::Amazon::Collector.new(
-      "source", "access_key_id", "secret_access_key")
+      "source", "access_key_id", "secret_access_key", metrics)
     allow(collector).to receive(:save_inventory).and_return(1)
     allow(collector).to receive(:sweep_inventory)
     allow(collector).to receive(:create_parser).and_return(parser)
