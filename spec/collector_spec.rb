@@ -143,36 +143,38 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
   it "collects and parses service_instances" do
     parser = collect_and_parse(:service_instances)
 
-    expect(format_hash(:service_instances, parser)).to(
+    expect(format_hash(:service_instances, parser, :ignore => [:extra])).to(
       match_array(
-        [{:source_ref        => "id_0",
-          :source_created_at => Time.parse("2016-08-10 14:42:01 UTC").utc,
-          :service_offering  =>
-                                {:inventory_collection_name => :service_offerings,
-                                 :reference                 => {:source_ref => "prod_1"},
-                                 :ref                       => :manager_ref},
-          :service_plan      =>
-                                {:inventory_collection_name => :service_plans,
-                                 :reference                 => {:source_ref => "prod_1__provisioning_artifact_1__path_1"},
-                                 :ref                       => :manager_ref},
-          :source_region     =>
-                                {:inventory_collection_name => :source_regions,
-                                 :reference                 => {:source_ref => "us-east-1"},
-                                 :ref                       => :manager_ref}},
-         {:source_ref        => "id_0",
-          :source_created_at => Time.parse("2016-08-10 14:42:01 UTC").utc,
-          :service_offering  =>
-                                {:inventory_collection_name => :service_offerings,
-                                 :reference                 => {:source_ref => "prod_1"},
-                                 :ref                       => :manager_ref},
-          :service_plan      =>
-                                {:inventory_collection_name => :service_plans,
-                                 :reference                 => {:source_ref => "prod_1__provisioning_artifact_1__path_1"},
-                                 :ref                       => :manager_ref},
-          :source_region     =>
-                                {:inventory_collection_name => :source_regions,
-                                 :reference                 => {:source_ref => "us-west-1"},
-                                 :ref                       => :manager_ref}}]
+        [
+          {
+            :service_offering  =>
+              {:inventory_collection_name => :service_offerings,
+               :reference                 => {:source_ref => "prod_1"},
+               :ref                       => :manager_ref},
+            :service_plan      =>
+              {:inventory_collection_name => :service_plans,
+               :reference                 => {:source_ref => "prod_1__provisioning_artifact_1__path_1"},
+               :ref                       => :manager_ref},
+            :source_created_at => Time.parse("2016-08-10 16:42:01 +0200").utc,
+            :source_ref        => "id_0",
+            :source_region     =>
+              {:inventory_collection_name => :source_regions,
+               :reference                 => {:source_ref => "us-east-1"},
+               :ref                       => :manager_ref}},
+          {:service_offering  =>
+             {:inventory_collection_name => :service_offerings,
+              :reference                 => {:source_ref => "prod_1"},
+              :ref                       => :manager_ref},
+           :service_plan      =>
+             {:inventory_collection_name => :service_plans,
+              :reference                 => {:source_ref => "prod_1__provisioning_artifact_1__path_1"},
+              :ref                       => :manager_ref},
+           :source_created_at => Time.parse("2016-08-10 16:42:01 +0200").utc,
+           :source_ref        => "id_0",
+           :source_region     =>
+             {:inventory_collection_name => :source_regions,
+              :reference                 => {:source_ref => "us-west-1"},
+              :ref                       => :manager_ref}}]
       )
     )
   end
@@ -180,28 +182,31 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
   it "collects and parses service_plans" do
     parser = collect_and_parse(:service_plans)
 
-    expect(format_hash(:service_plans, parser)).to(
+    expect(format_hash(:service_plans, parser, :ignore => [:extra])).to(
       match_array(
-        [{:source_ref       => "prod_0__provisioning_artifact_1__path_1",
-          :name             => "name_0 provisioning_artifact_1_name path_1_name",
-          :service_offering =>
-                               {:inventory_collection_name => :service_offerings,
-                                :reference                 => {:source_ref => "prod_0"},
-                                :ref                       => :manager_ref},
-          :source_region    =>
-                               {:inventory_collection_name => :source_regions,
-                                :reference                 => {:source_ref => "us-east-1"},
-                                :ref                       => :manager_ref}},
-         {:source_ref       => "prod_0__provisioning_artifact_1__path_1",
-          :name             => "name_0 provisioning_artifact_1_name path_1_name",
-          :service_offering =>
-                               {:inventory_collection_name => :service_offerings,
-                                :reference                 => {:source_ref => "prod_0"},
-                                :ref                       => :manager_ref},
-          :source_region    =>
-                               {:inventory_collection_name => :source_regions,
-                                :reference                 => {:source_ref => "us-west-1"},
-                                :ref                       => :manager_ref}}]
+        [
+          {
+            :name             => "name_0 provisioning_artifact_1_name path_1_name",
+            :service_offering =>
+              {:inventory_collection_name => :service_offerings,
+               :reference                 => {:source_ref => "prod_0"},
+               :ref                       => :manager_ref},
+            :source_ref       => "prod_0__provisioning_artifact_1__path_1",
+            :source_region    =>
+              {:inventory_collection_name => :source_regions,
+               :reference                 => {:source_ref => "us-east-1"},
+               :ref                       => :manager_ref}},
+          {
+            :name             => "name_0 provisioning_artifact_1_name path_1_name",
+            :service_offering =>
+              {:inventory_collection_name => :service_offerings,
+               :reference                 => {:source_ref => "prod_0"},
+               :ref                       => :manager_ref},
+            :source_ref       => "prod_0__provisioning_artifact_1__path_1",
+            :source_region    =>
+              {:inventory_collection_name => :source_regions,
+               :reference                 => {:source_ref => "us-west-1"},
+               :ref                       => :manager_ref}}]
       )
     )
   end
@@ -297,7 +302,7 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
 
     collector = TopologicalInventory::Amazon::Collector.new(
       "source", "access_key_id", "secret_access_key")
-    allow(collector).to receive(:save_inventory)
+    allow(collector).to receive(:save_inventory).and_return(1)
     allow(collector).to receive(:sweep_inventory)
     allow(collector).to receive(:create_parser).and_return(parser)
 
@@ -307,8 +312,12 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
     parser
   end
 
-  def format_hash(entity, parser)
-    parser.collections[entity].data.map(&:to_hash)
+  def format_hash(entity, parser, ignore: nil)
+    hash = parser.collections[entity].data.map(&:to_hash)
+    if ignore
+      hash = hash.map { |x| x.except(*ignore) }
+    end
+    hash
   end
 
   def with_aws_stubbed(stub_responses_per_service)
