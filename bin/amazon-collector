@@ -34,7 +34,7 @@ TopologicalInventoryIngressApiClient.configure.host   = "#{ingress_api_uri.host}
 
 begin
   metrics = TopologicalInventory::Amazon::Collector::ApplicationMetrics.new
-  collector = TopologicalInventory::Amazon::Collector.new(args[:source], args[:access_key_id], args[:secret_access_key])
+  collector = TopologicalInventory::Amazon::Collector.new(args[:source], args[:access_key_id], args[:secret_access_key], metrics)
   collector.collect!
 ensure
   metrics.stop_server
