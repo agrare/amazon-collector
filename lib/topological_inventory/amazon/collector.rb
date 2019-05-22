@@ -1,35 +1,34 @@
 require "concurrent"
+require "topological_inventory-ingress_api-client/collector"
 require "topological_inventory/amazon/connection"
-require "topological_inventory/amazon/collector/cloud_formation"
-require "topological_inventory/amazon/collector/ec2"
-require "topological_inventory/amazon/collector/pricing"
-require "topological_inventory/amazon/collector/service_catalog"
 require "topological_inventory/amazon/parser"
 require "topological_inventory/amazon/iterator"
 require "topological_inventory/amazon/logging"
 require "topological_inventory-ingress_api-client"
-require "topological_inventory-ingress_api-client/save_inventory/saver"
 
 module TopologicalInventory
   module Amazon
-    class Collector
+    class Collector < ::TopologicalInventoryIngressApiClient::Collector
       include Logging
+
+      require "topological_inventory/amazon/collector/cloud_formation"
+      require "topological_inventory/amazon/collector/ec2"
+      require "topological_inventory/amazon/collector/pricing"
+      require "topological_inventory/amazon/collector/service_catalog"
 
       include Amazon::Collector::CloudFormation
       include Amazon::Collector::Ec2
       include Amazon::Collector::Pricing
       include Amazon::Collector::ServiceCatalog
 
-      def initialize(source, access_key_id, secret_access_key, metrics, batch_size: 1_000, poll_time: 5)
-        self.batch_size        = batch_size
-        self.collector_threads = Concurrent::Map.new
-        self.finished          = Concurrent::AtomicBoolean.new(false)
+      def initialize(source, access_key_id, secret_access_key, metrics, default_limit: 1_000, poll_time: 5)
+        super(source,
+              :default_limit => default_limit,
+              :poll_time     => poll_time)
+
         self.secret_access_key = secret_access_key
         self.access_key_id     = access_key_id
         self.metrics           = metrics
-        self.poll_time         = poll_time
-        self.queue             = Queue.new
-        self.source            = source
       end
 
       def collect!
@@ -47,18 +46,9 @@ module TopologicalInventory
         end
       end
 
-      def stop
-        finished.value = true
-      end
-
       private
 
-      attr_accessor :batch_size, :collector_threads, :finished, :log, :metrics,
-                    :secret_access_key, :access_key_id, :poll_time, :queue, :source
-
-      def finished?
-        finished.value
-      end
+      attr_accessor :log, :metrics, :secret_access_key, :access_key_id
 
       def process_entity(entity_type)
         parser      = create_parser
@@ -76,10 +66,10 @@ module TopologicalInventory
             count += 1
             parser.send("parse_#{entity_type}", entity, scope)
 
-            if count >= batch_size
+            if count >= limits[entity_type]
               count                   = 0
               refresh_state_part_uuid = SecureRandom.uuid
-              total_parts             += save_inventory(parser.collections.values, refresh_state_uuid, refresh_state_part_uuid)
+              total_parts             += save_inventory(parser.collections.values, inventory_name, schema_name, refresh_state_uuid, refresh_state_part_uuid)
               sweep_scope.merge(parser.collections.values.map(&:name))
 
               parser = create_parser
@@ -90,7 +80,7 @@ module TopologicalInventory
         if count > 0
           # Save the rest
           refresh_state_part_uuid = SecureRandom.uuid
-          total_parts             += save_inventory(parser.collections.values, refresh_state_uuid, refresh_state_part_uuid)
+          total_parts             += save_inventory(parser.collections.values, inventory_name, schema_name, refresh_state_uuid, refresh_state_part_uuid)
           sweep_scope.merge(parser.collections.values.map(&:name))
         end
 
@@ -99,52 +89,13 @@ module TopologicalInventory
         sweep_scope = sweep_scope.to_a
         logger.info("Sweeping inactive records for #{sweep_scope} with :refresh_state_uuid => '#{refresh_state_uuid}'...")
 
-        sweep_inventory(refresh_state_uuid, total_parts, sweep_scope)
+        sweep_inventory(inventory_name, schema_name, refresh_state_uuid, total_parts, sweep_scope)
 
         logger.info("Sweeping inactive records for #{sweep_scope} with :refresh_state_uuid => '#{refresh_state_uuid}'...Complete")
       end
 
       def create_parser
         Parser.new
-      end
-
-      def save_inventory(collections, refresh_state_uuid = nil, refresh_state_part_uuid = nil)
-        return 0 if collections.empty?
-
-        TopologicalInventoryIngressApiClient::SaveInventory::Saver.new(:client => ingress_api_client, :logger => logger).save(
-          :inventory => TopologicalInventoryIngressApiClient::Inventory.new(
-            :name                    => "Amazon",
-            :schema                  => TopologicalInventoryIngressApiClient::Schema.new(:name => "Default"),
-            :source                  => source,
-            :collections             => collections,
-            :refresh_state_uuid      => refresh_state_uuid,
-            :refresh_state_part_uuid => refresh_state_part_uuid,
-          )
-        )
-      rescue TopologicalInventoryIngressApiClient::ApiError => e
-        logger.error("Error when sending payload to Ingress API. Error message: #{e.message}. Error headers: #{e.response_headers}")
-        raise
-      end
-
-      def sweep_inventory(refresh_state_uuid, total_parts, sweep_scope)
-        TopologicalInventoryIngressApiClient::SaveInventory::Saver.new(:client => ingress_api_client, :logger => logger).save(
-          :inventory => TopologicalInventoryIngressApiClient::Inventory.new(
-            :name               => "Amazon",
-            :schema             => TopologicalInventoryIngressApiClient::Schema.new(:name => "Default"),
-            :source             => source,
-            :collections        => [],
-            :refresh_state_uuid => refresh_state_uuid,
-            :total_parts        => total_parts,
-            :sweep_scope        => sweep_scope,
-          )
-        )
-      rescue TopologicalInventoryIngressApiClient::ApiError => e
-        logger.error("Error when sending payload to Ingress API. Error message: #{e.message}. Error headers: #{e.response_headers}")
-        raise
-      end
-
-      def entity_types
-        endpoint_types.flat_map { |endpoint| send("#{endpoint}_entity_types") }
       end
 
       def cloud_formations_entity_types
@@ -200,6 +151,10 @@ module TopologicalInventory
 
       def default_region
         "us-east-1"
+      end
+
+      def inventory_name
+        "Amazon"
       end
     end
   end
