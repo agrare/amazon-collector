@@ -1,4 +1,3 @@
-require "topological_inventory/amazon/collector"
 require "topological_inventory/amazon/collector/application_metrics"
 require 'aws-sdk'
 require 'aws-sdk-cloudformation'
