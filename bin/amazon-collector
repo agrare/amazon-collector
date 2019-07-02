@@ -7,11 +7,14 @@ STDOUT.sync = true
 
 require "bundler/setup"
 require "topological_inventory/amazon/collector"
+require "topological_inventory/openshift/collectors_pool"
 require "topological_inventory/amazon/collector/application_metrics"
 
 def parse_args
   require 'optimist'
   opts = Optimist::options do
+    opt :config, "Sources configuration YAML file",
+        :type => :string, :default => ENV["CONFIG"]
     opt :source, "Inventory Source UID",
         :type => :string, :required => ENV["SOURCE_UID"].nil?, :default => ENV["SOURCE_UID"]
     opt :access_key_id, "Secret access key for the Amazon API access",
@@ -27,7 +30,19 @@ def parse_args
   opts
 end
 
+# Params for single-source mode and multi-source mode are mutually exclusive
+def check_mode(opts)
+  if opts[:config].nil?
+    Optimist::die :access_key_id, "can't be nil" if opts[:access_key_id].nil?
+    Optimist::die :secret_access_key, "can't be nil" if opts[:secret_access_key].nil?
+  else
+    Optimist::die :config, "not applicable in single-source mode" if opts[:access_key_id].present? || opts[:secret_access_key].present?
+  end
+end
+
 args = parse_args
+
+check_mode(args)
 
 ingress_api_uri = URI(args[:ingress_api])
 
@@ -36,8 +51,14 @@ TopologicalInventoryIngressApiClient.configure.host   = "#{ingress_api_uri.host}
 
 begin
   metrics = TopologicalInventory::Amazon::Collector::ApplicationMetrics.new(args[:metrics_port])
-  collector = TopologicalInventory::Amazon::Collector.new(args[:source], args[:access_key_id], args[:secret_access_key], metrics)
-  collector.collect!
+  if args[:config].nil?
+    collector = TopologicalInventory::Amazon::Collector.new(args[:source], args[:access_key_id], args[:secret_access_key], metrics)
+    collector.collect!
+  else
+    pool = TopologicalInventory::Amazon::CollectorsPool.new(args[:config], metrics)
+    pool.run!
+  end
 ensure
+  pool&.stop
   metrics.stop_server
 end
