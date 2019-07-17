@@ -7,17 +7,20 @@ STDOUT.sync = true
 
 require "bundler/setup"
 require "topological_inventory/amazon/collector"
+require "topological_inventory/amazon/collectors_pool"
 require "topological_inventory/amazon/collector/application_metrics"
 
 def parse_args
   require 'optimist'
   opts = Optimist::options do
+    opt :config, "Sources configuration YAML file",
+        :type => :string, :default => ENV["CONFIG"]
     opt :source, "Inventory Source UID",
-        :type => :string, :required => ENV["SOURCE_UID"].nil?, :default => ENV["SOURCE_UID"]
+        :type => :string, :default => ENV["SOURCE_UID"]
     opt :access_key_id, "Secret access key for the Amazon API access",
-        :type => :string, :required => ENV["AUTH_USERNAME"].nil?, :default => ENV["AUTH_USERNAME"]
+        :type => :string, :default => ENV["AUTH_USERNAME"]
     opt :secret_access_key, "Secret access key for the Amazon API access",
-        :type => :string, :required => ENV["AUTH_PASSWORD"].nil?, :default => ENV["AUTH_PASSWORD"]
+        :type => :string, :default => ENV["AUTH_PASSWORD"]
     opt :ingress_api, "Hostname of the ingress-api route",
         :type => :string, :default => ENV["INGRESS_API"] || "http://localhost:9292"
     opt :metrics_port, "Port to expose the metrics endpoint on, 0 to disable metrics",
@@ -27,7 +30,21 @@ def parse_args
   opts
 end
 
+# Params for single-source mode and multi-source mode are mutually exclusive
+def check_mode(opts)
+  single_source_args = %i[source access_key_id secret_access_key]
+  if opts[:config].nil?
+    single_source_args.each do |arg|
+      Optimist::die arg, "can't be nil" if opts[arg].nil?
+    end
+  else
+    Optimist::die :config, "not applicable in single-source mode" if single_source_args.any? { |arg| opts[arg].present? }
+  end
+end
+
 args = parse_args
+
+check_mode(args)
 
 ingress_api_uri = URI(args[:ingress_api])
 
@@ -36,8 +53,14 @@ TopologicalInventoryIngressApiClient.configure.host   = "#{ingress_api_uri.host}
 
 begin
   metrics = TopologicalInventory::Amazon::Collector::ApplicationMetrics.new(args[:metrics_port])
-  collector = TopologicalInventory::Amazon::Collector.new(args[:source], args[:access_key_id], args[:secret_access_key], metrics)
-  collector.collect!
+  if args[:config].nil?
+    collector = TopologicalInventory::Amazon::Collector.new(args[:source], args[:access_key_id], args[:secret_access_key], metrics)
+    collector.collect!
+  else
+    pool = TopologicalInventory::Amazon::CollectorsPool.new(args[:config], metrics)
+    pool.run!
+  end
 ensure
+  pool&.stop!
   metrics.stop_server
 end
