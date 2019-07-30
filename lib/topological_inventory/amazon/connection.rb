@@ -47,8 +47,10 @@ module TopologicalInventory
         private
 
         def raw_connect(access_key_id, secret_access_key, service, region, proxy_uri = nil, validate = false, uri = nil)
-          require 'aws-sdk'
-          # require 'patches/aws-sdk-core/seahorse_client_net_http_pool_patch'
+          require "aws-sdk-ec2"
+          require "aws-sdk-cloudformation"
+          require "aws-sdk-pricing"
+          require "aws-sdk-servicecatalog"
 
           options = {
             :access_key_id     => access_key_id,
