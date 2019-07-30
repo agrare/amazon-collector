@@ -1,8 +1,8 @@
 require "topological_inventory/amazon/collector/application_metrics"
-require 'aws-sdk'
-require 'aws-sdk-cloudformation'
-require 'aws-sdk-servicecatalog'
-require 'aws-sdk-pricing'
+require "aws-sdk-ec2"
+require "aws-sdk-cloudformation"
+require "aws-sdk-pricing"
+require "aws-sdk-servicecatalog"
 require_relative 'aws_stubs'
 
 RSpec.describe TopologicalInventory::Amazon::Collector do

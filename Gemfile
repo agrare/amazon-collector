@@ -18,5 +18,12 @@ group :test, :devlopment do
   gem "simplecov"
 end
 
-# TODO(lsmola) we should probably list what services exactly we want? (and versions) Since this loads like 50 repos
-gem "aws-sdk", "~>3.0.0"
+# Collector
+gem "aws-sdk-ec2", "~>1.102.0"
+gem "aws-sdk-cloudformation", "~>1.25.0"
+gem "aws-sdk-pricing", "~>1.15.0"
+gem "aws-sdk-servicecatalog", "~>1.32.0"
+
+# Event catcher
+gem "aws-sdk-sqs", "~>1.20.0"
+gem "aws-sdk-sns", "~>1.19.0"
