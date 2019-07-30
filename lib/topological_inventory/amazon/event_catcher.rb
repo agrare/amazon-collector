@@ -7,7 +7,9 @@
 # queue to the AWS Config topic.
 
 require "topological_inventory/amazon/connection"
-require 'aws-sdk'
+require "aws-sdk-sqs"
+require "aws-sdk-sns"
+
 require "concurrent"
 require "manageiq-messaging"
 
