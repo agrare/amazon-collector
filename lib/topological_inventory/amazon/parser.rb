@@ -4,6 +4,11 @@ require "topological_inventory/amazon/parser/service_offering"
 require "topological_inventory/amazon/parser/service_plan"
 require "topological_inventory/amazon/parser/service_instance"
 require "topological_inventory/amazon/parser/flavor"
+require "topological_inventory/amazon/parser/floating_ip"
+require "topological_inventory/amazon/parser/network"
+require "topological_inventory/amazon/parser/network_adapter"
+require "topological_inventory/amazon/parser/security_group"
+require "topological_inventory/amazon/parser/subnet"
 require "topological_inventory/amazon/parser/vm"
 require "topological_inventory/amazon/parser/volume"
 require "topological_inventory/amazon/parser/volume_type"
@@ -19,6 +24,11 @@ module TopologicalInventory
       include Parser::ServicePlan
       include Parser::ServiceInstance
       include Parser::Flavor
+      include Parser::FloatingIp
+      include Parser::Network
+      include Parser::NetworkAdapter
+      include Parser::SecurityGroup
+      include Parser::Subnet
       include Parser::Vm
       include Parser::Volume
       include Parser::VolumeType

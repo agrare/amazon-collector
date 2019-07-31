@@ -62,18 +62,12 @@ module TopologicalInventory
         ec2_connection(:region => default_region).client.describe_regions.regions.each do |region|
           scope = {:region => region.region_name}
 
-          send(entity_type.to_s, scope).each do |entity|
-            count += 1
-            parser.send("parse_#{entity_type}", entity, scope)
+          # Collect, parse and save entity data
+          parser, count, total_parts, sweep_scope = save_entity(entity_type, refresh_state_uuid, parser, scope, count, total_parts, sweep_scope)
 
-            if count >= limits[entity_type]
-              count                   = 0
-              refresh_state_part_uuid = SecureRandom.uuid
-              total_parts             += save_inventory(parser.collections.values, inventory_name, schema_name, refresh_state_uuid, refresh_state_part_uuid)
-              sweep_scope.merge(parser.collections.values.map(&:name))
-
-              parser = create_parser
-            end
+          # Collect, parse and save related entities data, if there are any
+          (related_entities[entity_type.to_sym] || []).each do |related_entity_type|
+            parser, count, total_parts, sweep_scope = save_entity(related_entity_type, refresh_state_uuid, parser, scope, count, total_parts, sweep_scope)
           end
         end
 
@@ -94,6 +88,33 @@ module TopologicalInventory
         logger.info("Sweeping inactive records for #{sweep_scope} with :refresh_state_uuid => '#{refresh_state_uuid}'...Complete")
       end
 
+      # Collect, parse and save entity data
+      def save_entity(entity_type, refresh_state_uuid, parser, scope, count, total_parts, sweep_scope)
+        send(entity_type.to_s, scope).each do |entity|
+          count += 1
+          parser.send("parse_#{entity_type}", entity, scope)
+
+          if count >= limits[entity_type]
+            count                   = 0
+            refresh_state_part_uuid = SecureRandom.uuid
+            total_parts             += save_inventory(parser.collections.values, inventory_name, schema_name, refresh_state_uuid, refresh_state_part_uuid)
+            sweep_scope.merge(parser.collections.values.map(&:name))
+
+            parser = create_parser
+          end
+        end
+
+        return parser, count, total_parts, sweep_scope
+      end
+
+      # Entities that should be always refreshed and sweeped together, e.g. if by scanning Vms, we're also creating
+      # network adapters
+      def related_entities
+        {
+          :vms => [:network_adapters]
+        }
+      end
+
       def create_parser
         Parser.new
       end
@@ -103,7 +124,7 @@ module TopologicalInventory
       end
 
       def ec2_entity_types
-        %w(source_regions vms volumes)
+        %w(source_regions vms volumes networks subnets security_groups floating_ips)
       end
 
       def service_catalog_entity_types
