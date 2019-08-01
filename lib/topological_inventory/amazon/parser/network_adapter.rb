@@ -13,19 +13,18 @@ module TopologicalInventory::Amazon
           :source_ref          => interface.network_interface_id,
           :mac_address         => interface.mac_address,
           :extra               => {
-            :association          => interface.association&.to_h,
-            :attachment           => interface.attachment&.to_h,
-            :private_ip_addresses => interface.private_ip_addresses.map(&:to_h),
-            :ipv_6_addresses      => interface.ipv_6_addresses.map(&:to_h),
-            :groups               => interface.groups.map(&:to_h),
-            :availability_zone    => interface.availability_zone,
-            :description          => interface.description,
-            :interface_type       => interface.interface_type,
-            :private_dns_name     => interface.private_dns_name,
-            :status               => interface.status,
-            :requester_id         => interface.requester_id,
-            :requester_managed    => interface.requester_managed,
-            :source_dest_check    => interface.source_dest_check,
+            :association       => interface.association&.to_h,
+            :attachment        => interface.attachment&.to_h,
+            :ipv_6_addresses   => interface.ipv_6_addresses.map(&:to_h),
+            :groups            => interface.groups.map(&:to_h),
+            :availability_zone => interface.availability_zone,
+            :description       => interface.description,
+            :interface_type    => interface.interface_type,
+            :private_dns_name  => interface.private_dns_name,
+            :status            => interface.status,
+            :requester_id      => interface.requester_id,
+            :requester_managed => interface.requester_managed,
+            :source_dest_check => interface.source_dest_check,
           },
           :source_region       => lazy_find(:source_regions, :source_ref => scope[:region]),
           :orchestration_stack => stack,
@@ -41,9 +40,16 @@ module TopologicalInventory::Amazon
 
         interface.private_ip_addresses.each do |address|
           collections[:ipaddresses].data << TopologicalInventoryIngressApiClient::Ipaddress.new(
+            :source_ref      => "#{interface.network_interface_id}___#{interface.subnet_id}___#{address.private_ip_address}",
             :ipaddress       => address.private_ip_address,
             :network_adapter => lazy_find(:network_adapters, :source_ref => interface.network_interface_id),
-            :subnet          => subnet
+            :subnet          => subnet,
+            :kind            => "private",
+            :extra           => {
+              :primary          => address.primary,
+              :private_dns_name => address.private_dns_name,
+              :association      => address.association&.to_h
+            }
           )
         end
       end

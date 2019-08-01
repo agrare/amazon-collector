@@ -6,9 +6,10 @@ module TopologicalInventory::Amazon
         stack           = lazy_find(:orchestration_stacks, :source_ref => stack_id) if stack_id
         network_adapter = lazy_find(:network_adapters, :source_ref => ip.network_interface_id) if ip.network_interface_id
 
-        collections[:floating_ips].data << TopologicalInventoryIngressApiClient::FloatingIp.new(
+        collections[:ipaddresses].data << TopologicalInventoryIngressApiClient::Ipaddress.new(
           :source_ref          => ip.allocation_id || ip.public_ip,
           :ipaddress           => ip.public_ip,
+          :kind                => "elastic",
           :extra               => {
             :allocation_id      => ip.allocation_id,
             :association_id     => ip.association_id,
@@ -27,9 +28,9 @@ module TopologicalInventory::Amazon
 
       def parse_floating_ip_tags(floating_ip_uid, tags)
         tags.each do |tag|
-          collections[:floating_ip_tags].data << TopologicalInventoryIngressApiClient::NetworkTag.new(
-            :floating_ip => lazy_find(:floating_ips, :source_ref => floating_ip_uid),
-            :tag         => lazy_find(:tags, :name => tag.key, :value => tag.value, :namespace => "amazon"),
+          collections[:ipaddress_tags].data << TopologicalInventoryIngressApiClient::IpaddressTag.new(
+            :ipaddress => lazy_find(:ipaddresses, :source_ref => floating_ip_uid),
+            :tag       => lazy_find(:tags, :name => tag.key, :value => tag.value, :namespace => "amazon"),
           )
         end
       end

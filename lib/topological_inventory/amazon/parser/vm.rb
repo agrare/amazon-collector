@@ -2,6 +2,7 @@ module TopologicalInventory::Amazon
   class Parser
     module Vm
       def parse_vms(instance, _scope)
+        # require 'byebug'; byebug if !instance.vpc_id
         uid    = instance.id
         name   = get_from_tags(instance.tags, :name) || uid
         flavor = lazy_find(:flavors, :source_ref => instance.instance_type) if instance.instance_type
@@ -16,6 +17,7 @@ module TopologicalInventory::Amazon
         )
 
         collections[:vms].data << vm
+        parse_vm_security_groups(instance)
         parse_vm_tags(uid, instance.tags)
       end
 
@@ -40,6 +42,15 @@ module TopologicalInventory::Amazon
         end
 
         network
+      end
+
+      def parse_vm_security_groups(instance)
+        (instance.security_groups || []).each do |sg|
+          collections[:vm_security_groups].data << TopologicalInventoryIngressApiClient::VmSecurityGroup.new(
+            :vm             => lazy_find(:vms, :source_ref => instance.id),
+            :security_group => lazy_find(:security_groups, :source_ref => sg.group_id),
+          )
+        end
       end
 
       def parse_vm_tags(vm_uid, tags)

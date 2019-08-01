@@ -111,7 +111,7 @@ module TopologicalInventory
       # network adapters
       def related_entities
         {
-          :vms => [:network_adapters]
+          :vms => [:network_adapters, :floating_ips]
         }
       end
 
@@ -124,7 +124,7 @@ module TopologicalInventory
       end
 
       def ec2_entity_types
-        %w(source_regions vms volumes networks subnets security_groups floating_ips)
+        %w(source_regions vms volumes networks subnets security_groups)
       end
 
       def service_catalog_entity_types
