@@ -7,5 +7,10 @@ require "topological_inventory/amazon/operations/worker"
 queue_host = ENV["QUEUE_HOST"] || "localhost"
 queue_port = ENV["QUEUE_PORT"] || 9092
 
+SourcesApiClient.configure do |config|
+  config.scheme = ENV["SOURCES_SCHEME"]
+  config.host   = "#{ENV["SOURCES_HOST"]}:#{ENV["SOURCES_PORT"]}"
+end
+
 operations_worker = TopologicalInventory::Amazon::Operations::Worker.new(:host => queue_host, :port => queue_port)
 operations_worker.run

@@ -1,5 +1,6 @@
 require "topological_inventory/amazon/logging"
 require "topological_inventory/amazon/operations/processor"
+require "topological_inventory/amazon/operations/source"
 
 module TopologicalInventory
   module Amazon
