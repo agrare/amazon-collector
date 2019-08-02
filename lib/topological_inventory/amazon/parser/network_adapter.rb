@@ -57,7 +57,7 @@ module TopologicalInventory::Amazon
 
       def parse_network_adapter_tags(network_adapter_uid, tags)
         tags.each do |tag|
-          collections[:network_adapter_tags].data << TopologicalInventoryIngressApiClient::NetworkTag.new(
+          collections[:network_adapter_tags].data << TopologicalInventoryIngressApiClient::NetworkAdapterTag.new(
             :network_adapter => lazy_find(:network_adapters, :source_ref => network_adapter_uid),
             :tag             => lazy_find(:tags, :name => tag.key, :value => tag.value, :namespace => "amazon"),
           )
