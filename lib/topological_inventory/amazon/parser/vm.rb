@@ -1,8 +1,7 @@
 module TopologicalInventory::Amazon
   class Parser
     module Vm
-      def parse_vms(instance, _scope)
-        # require 'byebug'; byebug if !instance.vpc_id
+      def parse_vms(instance, scope)
         uid    = instance.id
         name   = get_from_tags(instance.tags, :name) || uid
         flavor = lazy_find(:flavors, :source_ref => instance.instance_type) if instance.instance_type
@@ -19,6 +18,7 @@ module TopologicalInventory::Amazon
         collections[:vms].data << vm
         parse_vm_security_groups(instance)
         parse_vm_tags(uid, instance.tags)
+        ec2_classic_network_adapters_and_ips(instance, scope)
       end
 
       private
@@ -58,6 +58,44 @@ module TopologicalInventory::Amazon
           collections[:vm_tags].data << TopologicalInventoryIngressApiClient::VmTag.new(
             :vm  => lazy_find(:vms, :source_ref => vm_uid),
             :tag => lazy_find(:tags, :name => tag.key, :value => tag.value, :namespace => "amazon"),
+          )
+        end
+      end
+
+      def ec2_classic_network_adapters_and_ips(instance, scope)
+        return if instance.vpc_id
+
+        collections[:network_adapters].data << TopologicalInventoryIngressApiClient::NetworkAdapter.new(
+          :source_ref    => instance.instance_id,
+          :mac_address   => nil,
+          :source_region => lazy_find(:source_regions, :source_ref => scope[:region]),
+          :device        => lazy_find(:vms, :source_ref => instance.instance_id),
+        )
+
+        collections[:ipaddresses].data << TopologicalInventoryIngressApiClient::Ipaddress.new(
+          :source_ref      => "#{instance.instance_id}___#{""}___#{instance.private_ip_address}",
+          :ipaddress       => instance.private_ip_address,
+          :network_adapter => lazy_find(:network_adapters, :source_ref => instance.instance_id),
+          :source_region   => lazy_find(:source_regions, :source_ref => scope[:region]),
+          :extra           => {
+            :primary          => true,
+            :private_dns_name => instance.private_dns_name,
+          },
+          :subnet          => nil,
+          :kind            => "private",
+        )
+
+        if instance.public_ip_address
+          collections[:ipaddresses].data << TopologicalInventoryIngressApiClient::Ipaddress.new(
+            :source_ref      => instance.public_ip_address,
+            :ipaddress       => instance.public_ip_address,
+            :network_adapter => lazy_find(:network_adapters, :source_ref => instance.instance_id),
+            :source_region   => lazy_find(:source_regions, :source_ref => scope[:region]),
+            :subnet          => nil,
+            :kind            => "public",
+            :extra           => {
+              :private_ip_address => instance.private_ip_address,
+            }
           )
         end
       end
