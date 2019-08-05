@@ -53,6 +53,17 @@ module TopologicalInventory
         }
       end
 
+      def parse_tags(collection, uid, tags)
+        client_class = "TopologicalInventoryIngressApiClient::#{collection.to_s.singularize.camelize}Tag".constantize
+
+        (tags || []).each do |tag|
+          collections["#{collection.to_s.singularize}_tags".to_sym].data << client_class.new(
+            collection.to_s.singularize.to_sym => lazy_find(collection, :source_ref => uid),
+            :tag                               => lazy_find(:tags, :name => tag.key, :value => tag.value, :namespace => "amazon"),
+          )
+        end
+      end
+
       def archive_entity(inventory_object, entity)
         source_deleted_at                  = entity.metadata&.deletionTimestamp || Time.now.utc
         inventory_object.source_deleted_at = source_deleted_at

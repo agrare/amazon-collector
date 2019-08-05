@@ -26,16 +26,7 @@ module TopologicalInventory::Amazon
           :orchestration_stack => stack
         )
 
-        parse_subnet_tags(subnet.subnet_id, subnet.tags)
-      end
-
-      def parse_subnet_tags(subnet_uid, tags)
-        tags.each do |tag|
-          collections[:subnet_tags].data << TopologicalInventoryIngressApiClient::SubnetTag.new(
-            :subnet => lazy_find(:subnets, :source_ref => subnet_uid),
-            :tag    => lazy_find(:tags, :name => tag.key, :value => tag.value, :namespace => "amazon"),
-          )
-        end
+        parse_tags(:subnets, subnet.subnet_id, subnet.tags)
       end
     end
   end

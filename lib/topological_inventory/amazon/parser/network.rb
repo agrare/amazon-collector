@@ -22,16 +22,7 @@ module TopologicalInventory::Amazon
           :orchestration_stack => stack
         )
 
-        parse_network_tags(vpc.vpc_id, vpc.tags)
-      end
-
-      def parse_network_tags(network_uid, tags)
-        tags.each do |tag|
-          collections[:network_tags].data << TopologicalInventoryIngressApiClient::NetworkTag.new(
-            :network => lazy_find(:networks, :source_ref => network_uid),
-            :tag     => lazy_find(:tags, :name => tag.key, :value => tag.value, :namespace => "amazon"),
-          )
-        end
+        parse_tags(:networks, vpc.vpc_id, vpc.tags)
       end
     end
   end

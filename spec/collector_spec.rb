@@ -484,7 +484,42 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
     )
 
     expect(format_hash(:ipaddress_tags, parser)).to(
-      match_array([])
+      match_array(
+        [
+          {:ipaddress =>
+                         {:inventory_collection_name => :ipaddresses,
+                          :reference                 => {:source_ref => "allocation_0"},
+                          :ref                       => :manager_ref},
+           :tag       =>
+                         {:inventory_collection_name => :tags,
+                          :reference                 => {:name => "is_floating", :value => "true", :namespace => "amazon"},
+                          :ref                       => :manager_ref}},
+          {:ipaddress =>
+                         {:inventory_collection_name => :ipaddresses,
+                          :reference                 => {:source_ref => "allocation_0"},
+                          :ref                       => :manager_ref},
+           :tag       =>
+                         {:inventory_collection_name => :tags,
+                          :reference                 => {:name => "color", :value => "void", :namespace => "amazon"},
+                          :ref                       => :manager_ref}},
+          {:ipaddress =>
+                         {:inventory_collection_name => :ipaddresses,
+                          :reference                 => {:source_ref => "allocation_0"},
+                          :ref                       => :manager_ref},
+           :tag       =>
+                         {:inventory_collection_name => :tags,
+                          :reference                 => {:name => "is_floating", :value => "true", :namespace => "amazon"},
+                          :ref                       => :manager_ref}},
+          {:ipaddress =>
+                         {:inventory_collection_name => :ipaddresses,
+                          :reference                 => {:source_ref => "allocation_0"},
+                          :ref                       => :manager_ref},
+           :tag       =>
+                         {:inventory_collection_name => :tags,
+                          :reference                 => {:name => "color", :value => "void", :namespace => "amazon"},
+                          :ref                       => :manager_ref}}
+        ]
+      )
     )
 
     expect(format_hash(:vm_security_groups, parser)).to(
@@ -648,7 +683,42 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
     )
 
     expect(format_hash(:security_group_tags, parser)).to(
-      match_array([])
+      match_array(
+        [
+          {:security_group =>
+                              {:inventory_collection_name => :security_groups,
+                               :reference                 => {:source_ref => "security_group_0"},
+                               :ref                       => :manager_ref},
+           :tag            =>
+                              {:inventory_collection_name => :tags,
+                               :reference                 => {:name => "is_secure", :value => "true", :namespace => "amazon"},
+                               :ref                       => :manager_ref}},
+          {:security_group =>
+                              {:inventory_collection_name => :security_groups,
+                               :reference                 => {:source_ref => "security_group_0"},
+                               :ref                       => :manager_ref},
+           :tag            =>
+                              {:inventory_collection_name => :tags,
+                               :reference                 => {:name => "dimension", :value => "void_42", :namespace => "amazon"},
+                               :ref                       => :manager_ref}},
+          {:security_group =>
+                              {:inventory_collection_name => :security_groups,
+                               :reference                 => {:source_ref => "security_group_0"},
+                               :ref                       => :manager_ref},
+           :tag            =>
+                              {:inventory_collection_name => :tags,
+                               :reference                 => {:name => "is_secure", :value => "true", :namespace => "amazon"},
+                               :ref                       => :manager_ref}},
+          {:security_group =>
+                              {:inventory_collection_name => :security_groups,
+                               :reference                 => {:source_ref => "security_group_0"},
+                               :ref                       => :manager_ref},
+           :tag            =>
+                              {:inventory_collection_name => :tags,
+                               :reference                 => {:name => "dimension", :value => "void_42", :namespace => "amazon"},
+                               :ref                       => :manager_ref}}
+        ]
+      )
     )
   end
 

@@ -19,16 +19,7 @@ module TopologicalInventory::Amazon
           :network             => network,
         )
 
-        parse_security_group_tags(sg.group_id, sg.tags)
-      end
-
-      def parse_security_group_tags(security_group_uid, tags)
-        tags.each do |tag|
-          collections[:security_group_tags].data << TopologicalInventoryIngressApiClient::SecurityGroupTag.new(
-            :security_group => lazy_find(:security_groups, :source_ref => security_group_uid),
-            :tag            => lazy_find(:tags, :name => tag.key, :value => tag.value, :namespace => "amazon"),
-          )
-        end
+        parse_tags(:security_groups, sg.group_id, sg.tags)
       end
     end
   end

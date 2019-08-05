@@ -17,7 +17,7 @@ module TopologicalInventory::Amazon
 
         collections[:vms].data << vm
         parse_vm_security_groups(instance)
-        parse_vm_tags(uid, instance.tags)
+        parse_tags(:vms, uid, instance.tags)
         ec2_classic_network_adapters_and_ips(instance, scope)
       end
 
@@ -49,15 +49,6 @@ module TopologicalInventory::Amazon
           collections[:vm_security_groups].data << TopologicalInventoryIngressApiClient::VmSecurityGroup.new(
             :vm             => lazy_find(:vms, :source_ref => instance.id),
             :security_group => lazy_find(:security_groups, :source_ref => sg.group_id),
-          )
-        end
-      end
-
-      def parse_vm_tags(vm_uid, tags)
-        tags.each do |tag|
-          collections[:vm_tags].data << TopologicalInventoryIngressApiClient::VmTag.new(
-            :vm  => lazy_find(:vms, :source_ref => vm_uid),
-            :tag => lazy_find(:tags, :name => tag.key, :value => tag.value, :namespace => "amazon"),
           )
         end
       end
