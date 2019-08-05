@@ -4,7 +4,7 @@ module TopologicalInventory::Amazon
       def parse_subnets(subnet, scope)
         stack_id = get_from_tags(subnet.tags, "aws:cloudformation:stack-id")
         stack    = lazy_find(:orchestration_stacks, :source_ref => stack_id) if stack_id
-        network  = lazy_find(:cloud_networks, :source_ref => subnet.vpc_id) if subnet.vpc_id
+        network  = lazy_find(:networks, :source_ref => subnet.vpc_id) if subnet.vpc_id
 
         collections[:subnets].data << TopologicalInventoryIngressApiClient::Subnet.new(
           :source_ref          => subnet.subnet_id,
