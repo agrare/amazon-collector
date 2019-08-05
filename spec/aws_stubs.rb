@@ -368,7 +368,7 @@ module AwsStubs
             :mac_address          => "06:d5:e7:4e:c8:01",
           }
         ],
-        :security_groups => [
+        :security_groups    => [
           {
             :group_id => "security_group_#{i}"
           }

@@ -19,36 +19,36 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
           :power_state   => "on",
           :mac_addresses => ["06:d5:e7:4e:c8:01"],
           :flavor        =>
-            {:inventory_collection_name => :flavors,
-             :reference                 => {:source_ref => "m3.medium"},
-             :ref                       => :manager_ref}},
+                            {:inventory_collection_name => :flavors,
+                             :reference                 => {:source_ref => "m3.medium"},
+                             :ref                       => :manager_ref}},
          {:source_ref    => "instance_ec2_0",
           :uid_ems       => "instance_ec2_0",
           :name          => "instance_ec2_0",
           :power_state   => "on",
           :mac_addresses => [],
           :flavor        =>
-            {:inventory_collection_name => :flavors,
-             :reference                 => {:source_ref => "m3.medium"},
-             :ref                       => :manager_ref}},
+                            {:inventory_collection_name => :flavors,
+                             :reference                 => {:source_ref => "m3.medium"},
+                             :ref                       => :manager_ref}},
          {:source_ref    => "instance_0",
           :uid_ems       => "instance_0",
           :name          => "instance_0",
           :power_state   => "on",
           :mac_addresses => ["06:d5:e7:4e:c8:01"],
           :flavor        =>
-            {:inventory_collection_name => :flavors,
-             :reference                 => {:source_ref => "m3.medium"},
-             :ref                       => :manager_ref}},
+                            {:inventory_collection_name => :flavors,
+                             :reference                 => {:source_ref => "m3.medium"},
+                             :ref                       => :manager_ref}},
          {:source_ref    => "instance_ec2_0",
           :uid_ems       => "instance_ec2_0",
           :name          => "instance_ec2_0",
           :power_state   => "on",
           :mac_addresses => [],
           :flavor        =>
-            {:inventory_collection_name => :flavors,
-             :reference                 => {:source_ref => "m3.medium"},
-             :ref                       => :manager_ref}}]
+                            {:inventory_collection_name => :flavors,
+                             :reference                 => {:source_ref => "m3.medium"},
+                             :ref                       => :manager_ref}}]
       )
     )
 
@@ -56,198 +56,202 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
       match_array(
         [
           {:tag =>
-             {:inventory_collection_name => :tags,
-              :reference                 =>
-                {:name      => "tag_01_for_instance_0",
-                 :value     => "tag_01_value_for_instance_0",
-                 :namespace => "amazon"},
-              :ref                       => :manager_ref},
+                   {:inventory_collection_name => :tags,
+                    :reference                 =>
+                                                  {:name      => "tag_01_for_instance_0",
+                                                   :value     => "tag_01_value_for_instance_0",
+                                                   :namespace => "amazon"},
+                    :ref                       => :manager_ref},
            :vm  =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref}},
+                   {:inventory_collection_name => :vms,
+                    :reference                 => {:source_ref => "instance_0"},
+                    :ref                       => :manager_ref}},
           {:tag =>
-             {:inventory_collection_name => :tags,
-              :reference                 =>
-                {:name      => "tag_02_for_instance_0",
-                 :value     => "tag_02_value_for_instance_0",
-                 :namespace => "amazon"},
-              :ref                       => :manager_ref},
+                   {:inventory_collection_name => :tags,
+                    :reference                 =>
+                                                  {:name      => "tag_02_for_instance_0",
+                                                   :value     => "tag_02_value_for_instance_0",
+                                                   :namespace => "amazon"},
+                    :ref                       => :manager_ref},
            :vm  =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref}},
+                   {:inventory_collection_name => :vms,
+                    :reference                 => {:source_ref => "instance_0"},
+                    :ref                       => :manager_ref}},
           {:tag =>
-             {:inventory_collection_name => :tags,
-              :reference                 =>
-                {:name      => "tag_03_for_instance_0",
-                 :value     => "tag_03_value_for_instance_0",
-                 :namespace => "amazon"},
-              :ref                       => :manager_ref},
+                   {:inventory_collection_name => :tags,
+                    :reference                 =>
+                                                  {:name      => "tag_03_for_instance_0",
+                                                   :value     => "tag_03_value_for_instance_0",
+                                                   :namespace => "amazon"},
+                    :ref                       => :manager_ref},
            :vm  =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref}},
+                   {:inventory_collection_name => :vms,
+                    :reference                 => {:source_ref => "instance_0"},
+                    :ref                       => :manager_ref}},
           {:tag =>
-             {:inventory_collection_name => :tags,
-              :reference                 =>
-                {:name      => "tag_01_for_instance_0",
-                 :value     => "tag_01_value_for_instance_0",
-                 :namespace => "amazon"},
-              :ref                       => :manager_ref},
+                   {:inventory_collection_name => :tags,
+                    :reference                 =>
+                                                  {:name      => "tag_01_for_instance_0",
+                                                   :value     => "tag_01_value_for_instance_0",
+                                                   :namespace => "amazon"},
+                    :ref                       => :manager_ref},
            :vm  =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_ec2_0"},
-              :ref                       => :manager_ref}},
+                   {:inventory_collection_name => :vms,
+                    :reference                 => {:source_ref => "instance_ec2_0"},
+                    :ref                       => :manager_ref}},
           {:tag =>
-             {:inventory_collection_name => :tags,
-              :reference                 =>
-                {:name      => "tag_02_for_instance_0",
-                 :value     => "tag_02_value_for_instance_0",
-                 :namespace => "amazon"},
-              :ref                       => :manager_ref},
+                   {:inventory_collection_name => :tags,
+                    :reference                 =>
+                                                  {:name      => "tag_02_for_instance_0",
+                                                   :value     => "tag_02_value_for_instance_0",
+                                                   :namespace => "amazon"},
+                    :ref                       => :manager_ref},
            :vm  =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_ec2_0"},
-              :ref                       => :manager_ref}},
+                   {:inventory_collection_name => :vms,
+                    :reference                 => {:source_ref => "instance_ec2_0"},
+                    :ref                       => :manager_ref}},
           {:tag =>
-             {:inventory_collection_name => :tags,
-              :reference                 =>
-                {:name      => "tag_03_for_instance_0",
-                 :value     => "tag_03_value_for_instance_0",
-                 :namespace => "amazon"},
-              :ref                       => :manager_ref},
+                   {:inventory_collection_name => :tags,
+                    :reference                 =>
+                                                  {:name      => "tag_03_for_instance_0",
+                                                   :value     => "tag_03_value_for_instance_0",
+                                                   :namespace => "amazon"},
+                    :ref                       => :manager_ref},
            :vm  =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_ec2_0"},
-              :ref                       => :manager_ref}},
+                   {:inventory_collection_name => :vms,
+                    :reference                 => {:source_ref => "instance_ec2_0"},
+                    :ref                       => :manager_ref}},
           {:tag =>
-             {:inventory_collection_name => :tags,
-              :reference                 =>
-                {:name      => "tag_01_for_instance_0",
-                 :value     => "tag_01_value_for_instance_0",
-                 :namespace => "amazon"},
-              :ref                       => :manager_ref},
+                   {:inventory_collection_name => :tags,
+                    :reference                 =>
+                                                  {:name      => "tag_01_for_instance_0",
+                                                   :value     => "tag_01_value_for_instance_0",
+                                                   :namespace => "amazon"},
+                    :ref                       => :manager_ref},
            :vm  =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref}},
+                   {:inventory_collection_name => :vms,
+                    :reference                 => {:source_ref => "instance_0"},
+                    :ref                       => :manager_ref}},
           {:tag =>
-             {:inventory_collection_name => :tags,
-              :reference                 =>
-                {:name      => "tag_02_for_instance_0",
-                 :value     => "tag_02_value_for_instance_0",
-                 :namespace => "amazon"},
-              :ref                       => :manager_ref},
+                   {:inventory_collection_name => :tags,
+                    :reference                 =>
+                                                  {:name      => "tag_02_for_instance_0",
+                                                   :value     => "tag_02_value_for_instance_0",
+                                                   :namespace => "amazon"},
+                    :ref                       => :manager_ref},
            :vm  =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref}},
+                   {:inventory_collection_name => :vms,
+                    :reference                 => {:source_ref => "instance_0"},
+                    :ref                       => :manager_ref}},
           {:tag =>
-             {:inventory_collection_name => :tags,
-              :reference                 =>
-                {:name      => "tag_03_for_instance_0",
-                 :value     => "tag_03_value_for_instance_0",
-                 :namespace => "amazon"},
-              :ref                       => :manager_ref},
+                   {:inventory_collection_name => :tags,
+                    :reference                 =>
+                                                  {:name      => "tag_03_for_instance_0",
+                                                   :value     => "tag_03_value_for_instance_0",
+                                                   :namespace => "amazon"},
+                    :ref                       => :manager_ref},
            :vm  =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref}},
+                   {:inventory_collection_name => :vms,
+                    :reference                 => {:source_ref => "instance_0"},
+                    :ref                       => :manager_ref}},
           {:tag =>
-             {:inventory_collection_name => :tags,
-              :reference                 =>
-                {:name      => "tag_01_for_instance_0",
-                 :value     => "tag_01_value_for_instance_0",
-                 :namespace => "amazon"},
-              :ref                       => :manager_ref},
+                   {:inventory_collection_name => :tags,
+                    :reference                 =>
+                                                  {:name      => "tag_01_for_instance_0",
+                                                   :value     => "tag_01_value_for_instance_0",
+                                                   :namespace => "amazon"},
+                    :ref                       => :manager_ref},
            :vm  =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_ec2_0"},
-              :ref                       => :manager_ref}},
+                   {:inventory_collection_name => :vms,
+                    :reference                 => {:source_ref => "instance_ec2_0"},
+                    :ref                       => :manager_ref}},
           {:tag =>
-             {:inventory_collection_name => :tags,
-              :reference                 =>
-                {:name      => "tag_02_for_instance_0",
-                 :value     => "tag_02_value_for_instance_0",
-                 :namespace => "amazon"},
-              :ref                       => :manager_ref},
+                   {:inventory_collection_name => :tags,
+                    :reference                 =>
+                                                  {:name      => "tag_02_for_instance_0",
+                                                   :value     => "tag_02_value_for_instance_0",
+                                                   :namespace => "amazon"},
+                    :ref                       => :manager_ref},
            :vm  =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_ec2_0"},
-              :ref                       => :manager_ref}},
+                   {:inventory_collection_name => :vms,
+                    :reference                 => {:source_ref => "instance_ec2_0"},
+                    :ref                       => :manager_ref}},
           {:tag =>
-             {:inventory_collection_name => :tags,
-              :reference                 =>
-                {:name      => "tag_03_for_instance_0",
-                 :value     => "tag_03_value_for_instance_0",
-                 :namespace => "amazon"},
-              :ref                       => :manager_ref},
+                   {:inventory_collection_name => :tags,
+                    :reference                 =>
+                                                  {:name      => "tag_03_for_instance_0",
+                                                   :value     => "tag_03_value_for_instance_0",
+                                                   :namespace => "amazon"},
+                    :ref                       => :manager_ref},
            :vm  =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_ec2_0"},
-              :ref                       => :manager_ref}}])
+                   {:inventory_collection_name => :vms,
+                    :reference                 => {:source_ref => "instance_ec2_0"},
+                    :ref                       => :manager_ref}}
+        ]
+      )
     )
 
     expect(format_hash(:network_adapters, parser)).to(
       match_array(
         [
           {:device     =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref},
+                          {:inventory_collection_name => :vms,
+                           :reference                 => {:source_ref => "instance_0"},
+                           :ref                       => :manager_ref},
            :source_ref => "instance_0"},
           {:device     =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_ec2_0"},
-              :ref                       => :manager_ref},
+                          {:inventory_collection_name => :vms,
+                           :reference                 => {:source_ref => "instance_ec2_0"},
+                           :ref                       => :manager_ref},
            :source_ref => "instance_ec2_0"},
           {:device     =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref},
+                          {:inventory_collection_name => :vms,
+                           :reference                 => {:source_ref => "instance_0"},
+                           :ref                       => :manager_ref},
            :extra      =>
-             {:association       => nil,
-              :attachment        => {:instance_id => "instance_0"},
-              :ipv_6_addresses   => [],
-              :groups            => [],
-              :availability_zone => nil,
-              :description       => nil,
-              :interface_type    => nil,
-              :private_dns_name  => nil,
-              :status            => nil,
-              :requester_id      => nil,
-              :requester_managed => nil,
-              :source_dest_check => nil},
+                          {:association       => nil,
+                           :attachment        => {:instance_id => "instance_0"},
+                           :ipv_6_addresses   => [],
+                           :groups            => [],
+                           :availability_zone => nil,
+                           :description       => nil,
+                           :interface_type    => nil,
+                           :private_dns_name  => nil,
+                           :status            => nil,
+                           :requester_id      => nil,
+                           :requester_managed => nil,
+                           :source_dest_check => nil},
            :source_ref => "network_interface_0"},
           {:device     =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref},
+                          {:inventory_collection_name => :vms,
+                           :reference                 => {:source_ref => "instance_0"},
+                           :ref                       => :manager_ref},
            :source_ref => "instance_0"},
           {:device     =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_ec2_0"},
-              :ref                       => :manager_ref},
+                          {:inventory_collection_name => :vms,
+                           :reference                 => {:source_ref => "instance_ec2_0"},
+                           :ref                       => :manager_ref},
            :source_ref => "instance_ec2_0"},
           {:device     =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref},
+                          {:inventory_collection_name => :vms,
+                           :reference                 => {:source_ref => "instance_0"},
+                           :ref                       => :manager_ref},
            :extra      =>
-             {:association       => nil,
-              :attachment        => {:instance_id => "instance_0"},
-              :ipv_6_addresses   => [],
-              :groups            => [],
-              :availability_zone => nil,
-              :description       => nil,
-              :interface_type    => nil,
-              :private_dns_name  => nil,
-              :status            => nil,
-              :requester_id      => nil,
-              :requester_managed => nil,
-              :source_dest_check => nil},
-           :source_ref => "network_interface_0"}])
+                          {:association       => nil,
+                           :attachment        => {:instance_id => "instance_0"},
+                           :ipv_6_addresses   => [],
+                           :groups            => [],
+                           :availability_zone => nil,
+                           :description       => nil,
+                           :interface_type    => nil,
+                           :private_dns_name  => nil,
+                           :status            => nil,
+                           :requester_id      => nil,
+                           :requester_managed => nil,
+                           :source_dest_check => nil},
+           :source_ref => "network_interface_0"}
+        ]
+      )
     )
 
     expect(format_hash(:network_adapter_tags, parser)).to(
@@ -261,220 +265,221 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
            :ipaddress       => "10.0.0.0",
            :kind            => "private",
            :network_adapter =>
-             {:inventory_collection_name => :network_adapters,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :network_adapters,
+                                :reference                 => {:source_ref => "instance_0"},
+                                :ref                       => :manager_ref},
            :source_ref      => "instance_0______10.0.0.0",
            :source_region   =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-east-1"},
-              :ref                       => :manager_ref}},
+                               {:inventory_collection_name => :source_regions,
+                                :reference                 => {:source_ref => "us-east-1"},
+                                :ref                       => :manager_ref}},
           {:extra           => {:private_ip_address => "10.0.0.0"},
            :ipaddress       => "40.0.0.0",
            :kind            => "public",
            :network_adapter =>
-             {:inventory_collection_name => :network_adapters,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :network_adapters,
+                                :reference                 => {:source_ref => "instance_0"},
+                                :ref                       => :manager_ref},
            :source_ref      => "40.0.0.0",
            :source_region   =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-east-1"},
-              :ref                       => :manager_ref}},
+                               {:inventory_collection_name => :source_regions,
+                                :reference                 => {:source_ref => "us-east-1"},
+                                :ref                       => :manager_ref}},
           {:extra           => {:primary => true, :private_dns_name => nil},
            :ipaddress       => "11.0.0.0",
            :kind            => "private",
            :network_adapter =>
-             {:inventory_collection_name => :network_adapters,
-              :reference                 => {:source_ref => "instance_ec2_0"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :network_adapters,
+                                :reference                 => {:source_ref => "instance_ec2_0"},
+                                :ref                       => :manager_ref},
            :source_ref      => "instance_ec2_0______11.0.0.0",
            :source_region   =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-east-1"},
-              :ref                       => :manager_ref}},
+                               {:inventory_collection_name => :source_regions,
+                                :reference                 => {:source_ref => "us-east-1"},
+                                :ref                       => :manager_ref}},
           {:extra           => {:private_ip_address => "11.0.0.0"},
            :ipaddress       => "41.0.0.0",
            :kind            => "public",
            :network_adapter =>
-             {:inventory_collection_name => :network_adapters,
-              :reference                 => {:source_ref => "instance_ec2_0"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :network_adapters,
+                                :reference                 => {:source_ref => "instance_ec2_0"},
+                                :ref                       => :manager_ref},
            :source_ref      => "41.0.0.0",
            :source_region   =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-east-1"},
-              :ref                       => :manager_ref}},
+                               {:inventory_collection_name => :source_regions,
+                                :reference                 => {:source_ref => "us-east-1"},
+                                :ref                       => :manager_ref}},
           {:extra           =>
-             {:primary          => true,
-              :private_dns_name => nil,
-              :association      => {:public_ip => "58.0.0.0"}},
+                               {:primary          => true,
+                                :private_dns_name => nil,
+                                :association      => {:public_ip => "58.0.0.0"}},
            :ipaddress       => "10.0.0.0",
            :kind            => "private",
            :network_adapter =>
-             {:inventory_collection_name => :network_adapters,
-              :reference                 => {:source_ref => "network_interface_0"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :network_adapters,
+                                :reference                 => {:source_ref => "network_interface_0"},
+                                :ref                       => :manager_ref},
            :source_ref      => "network_interface_0___subnet_0___10.0.0.0",
            :source_region   =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-east-1"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :source_regions,
+                                :reference                 => {:source_ref => "us-east-1"},
+                                :ref                       => :manager_ref},
            :subnet          =>
-             {:inventory_collection_name => :subnets,
-              :reference                 => {:source_ref => "subnet_0"},
-              :ref                       => :manager_ref}},
+                               {:inventory_collection_name => :subnets,
+                                :reference                 => {:source_ref => "subnet_0"},
+                                :ref                       => :manager_ref}},
           {:extra           => {:primary => nil, :private_dns_name => nil, :association => nil},
            :ipaddress       => "11.0.0.0",
            :kind            => "private",
            :network_adapter =>
-             {:inventory_collection_name => :network_adapters,
-              :reference                 => {:source_ref => "network_interface_0"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :network_adapters,
+                                :reference                 => {:source_ref => "network_interface_0"},
+                                :ref                       => :manager_ref},
            :source_ref      => "network_interface_0___subnet_0___11.0.0.0",
            :source_region   =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-east-1"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :source_regions,
+                                :reference                 => {:source_ref => "us-east-1"},
+                                :ref                       => :manager_ref},
            :subnet          =>
-             {:inventory_collection_name => :subnets,
-              :reference                 => {:source_ref => "subnet_0"},
-              :ref                       => :manager_ref}},
+                               {:inventory_collection_name => :subnets,
+                                :reference                 => {:source_ref => "subnet_0"},
+                                :ref                       => :manager_ref}},
           {:extra           => {:private_ip_address => nil},
            :ipaddress       => "58.0.0.0",
            :kind            => "public",
            :network_adapter =>
-             {:inventory_collection_name => :network_adapters,
-              :reference                 => {:source_ref => "network_interface_0"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :network_adapters,
+                                :reference                 => {:source_ref => "network_interface_0"},
+                                :ref                       => :manager_ref},
            :source_ref      => "58.0.0.0",
            :source_region   =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-east-1"},
-              :ref                       => :manager_ref}},
+                               {:inventory_collection_name => :source_regions,
+                                :reference                 => {:source_ref => "us-east-1"},
+                                :ref                       => :manager_ref}},
           {:extra         =>
-             {:allocation_id      => "allocation_0",
-              :association_id     => nil,
-              :instance_id        => "instance_0",
-              :domain             => "vpc",
-              :public_ipv_4_pool  => nil,
-              :private_ip_address => nil},
+                             {:allocation_id      => "allocation_0",
+                              :association_id     => nil,
+                              :instance_id        => "instance_0",
+                              :domain             => "vpc",
+                              :public_ipv_4_pool  => nil,
+                              :private_ip_address => nil},
            :ipaddress     => "54.0.0.0",
            :kind          => "elastic",
            :source_ref    => "allocation_0",
            :source_region =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-east-1"},
-              :ref                       => :manager_ref}},
+                             {:inventory_collection_name => :source_regions,
+                              :reference                 => {:source_ref => "us-east-1"},
+                              :ref                       => :manager_ref}},
           {:extra           => {:primary => true, :private_dns_name => nil},
            :ipaddress       => "10.0.0.0",
            :kind            => "private",
            :network_adapter =>
-             {:inventory_collection_name => :network_adapters,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :network_adapters,
+                                :reference                 => {:source_ref => "instance_0"},
+                                :ref                       => :manager_ref},
            :source_ref      => "instance_0______10.0.0.0",
            :source_region   =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-west-1"},
-              :ref                       => :manager_ref}},
+                               {:inventory_collection_name => :source_regions,
+                                :reference                 => {:source_ref => "us-west-1"},
+                                :ref                       => :manager_ref}},
           {:extra           => {:private_ip_address => "10.0.0.0"},
            :ipaddress       => "40.0.0.0",
            :kind            => "public",
            :network_adapter =>
-             {:inventory_collection_name => :network_adapters,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :network_adapters,
+                                :reference                 => {:source_ref => "instance_0"},
+                                :ref                       => :manager_ref},
            :source_ref      => "40.0.0.0",
            :source_region   =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-west-1"},
-              :ref                       => :manager_ref}},
+                               {:inventory_collection_name => :source_regions,
+                                :reference                 => {:source_ref => "us-west-1"},
+                                :ref                       => :manager_ref}},
           {:extra           => {:primary => true, :private_dns_name => nil},
            :ipaddress       => "11.0.0.0",
            :kind            => "private",
            :network_adapter =>
-             {:inventory_collection_name => :network_adapters,
-              :reference                 => {:source_ref => "instance_ec2_0"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :network_adapters,
+                                :reference                 => {:source_ref => "instance_ec2_0"},
+                                :ref                       => :manager_ref},
            :source_ref      => "instance_ec2_0______11.0.0.0",
            :source_region   =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-west-1"},
-              :ref                       => :manager_ref}},
+                               {:inventory_collection_name => :source_regions,
+                                :reference                 => {:source_ref => "us-west-1"},
+                                :ref                       => :manager_ref}},
           {:extra           => {:private_ip_address => "11.0.0.0"},
            :ipaddress       => "41.0.0.0",
            :kind            => "public",
            :network_adapter =>
-             {:inventory_collection_name => :network_adapters,
-              :reference                 => {:source_ref => "instance_ec2_0"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :network_adapters,
+                                :reference                 => {:source_ref => "instance_ec2_0"},
+                                :ref                       => :manager_ref},
            :source_ref      => "41.0.0.0",
            :source_region   =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-west-1"},
-              :ref                       => :manager_ref}},
+                               {:inventory_collection_name => :source_regions,
+                                :reference                 => {:source_ref => "us-west-1"},
+                                :ref                       => :manager_ref}},
           {:extra           =>
-             {:primary          => true,
-              :private_dns_name => nil,
-              :association      => {:public_ip => "58.0.0.0"}},
+                               {:primary          => true,
+                                :private_dns_name => nil,
+                                :association      => {:public_ip => "58.0.0.0"}},
            :ipaddress       => "10.0.0.0",
            :kind            => "private",
            :network_adapter =>
-             {:inventory_collection_name => :network_adapters,
-              :reference                 => {:source_ref => "network_interface_0"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :network_adapters,
+                                :reference                 => {:source_ref => "network_interface_0"},
+                                :ref                       => :manager_ref},
            :source_ref      => "network_interface_0___subnet_0___10.0.0.0",
            :source_region   =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-west-1"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :source_regions,
+                                :reference                 => {:source_ref => "us-west-1"},
+                                :ref                       => :manager_ref},
            :subnet          =>
-             {:inventory_collection_name => :subnets,
-              :reference                 => {:source_ref => "subnet_0"},
-              :ref                       => :manager_ref}},
+                               {:inventory_collection_name => :subnets,
+                                :reference                 => {:source_ref => "subnet_0"},
+                                :ref                       => :manager_ref}},
           {:extra           => {:primary => nil, :private_dns_name => nil, :association => nil},
            :ipaddress       => "11.0.0.0",
            :kind            => "private",
            :network_adapter =>
-             {:inventory_collection_name => :network_adapters,
-              :reference                 => {:source_ref => "network_interface_0"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :network_adapters,
+                                :reference                 => {:source_ref => "network_interface_0"},
+                                :ref                       => :manager_ref},
            :source_ref      => "network_interface_0___subnet_0___11.0.0.0",
            :source_region   =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-west-1"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :source_regions,
+                                :reference                 => {:source_ref => "us-west-1"},
+                                :ref                       => :manager_ref},
            :subnet          =>
-             {:inventory_collection_name => :subnets,
-              :reference                 => {:source_ref => "subnet_0"},
-              :ref                       => :manager_ref}},
+                               {:inventory_collection_name => :subnets,
+                                :reference                 => {:source_ref => "subnet_0"},
+                                :ref                       => :manager_ref}},
           {:extra           => {:private_ip_address => nil},
            :ipaddress       => "58.0.0.0",
            :kind            => "public",
            :network_adapter =>
-             {:inventory_collection_name => :network_adapters,
-              :reference                 => {:source_ref => "network_interface_0"},
-              :ref                       => :manager_ref},
+                               {:inventory_collection_name => :network_adapters,
+                                :reference                 => {:source_ref => "network_interface_0"},
+                                :ref                       => :manager_ref},
            :source_ref      => "58.0.0.0",
            :source_region   =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-west-1"},
-              :ref                       => :manager_ref}},
+                               {:inventory_collection_name => :source_regions,
+                                :reference                 => {:source_ref => "us-west-1"},
+                                :ref                       => :manager_ref}},
           {:extra         =>
-             {:allocation_id      => "allocation_0",
-              :association_id     => nil,
-              :instance_id        => "instance_0",
-              :domain             => "vpc",
-              :public_ipv_4_pool  => nil,
-              :private_ip_address => nil},
+                             {:allocation_id      => "allocation_0",
+                              :association_id     => nil,
+                              :instance_id        => "instance_0",
+                              :domain             => "vpc",
+                              :public_ipv_4_pool  => nil,
+                              :private_ip_address => nil},
            :ipaddress     => "54.0.0.0",
            :kind          => "elastic",
            :source_ref    => "allocation_0",
            :source_region =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-west-1"},
-              :ref                       => :manager_ref}}]
+                             {:inventory_collection_name => :source_regions,
+                              :reference                 => {:source_ref => "us-west-1"},
+                              :ref                       => :manager_ref}}
+        ]
       )
     )
 
@@ -486,21 +491,22 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
       match_array(
         [
           {:security_group =>
-             {:inventory_collection_name => :security_groups,
-              :reference                 => {:source_ref => "security_group_0"},
-              :ref                       => :manager_ref},
+                              {:inventory_collection_name => :security_groups,
+                               :reference                 => {:source_ref => "security_group_0"},
+                               :ref                       => :manager_ref},
            :vm             =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref}},
+                              {:inventory_collection_name => :vms,
+                               :reference                 => {:source_ref => "instance_0"},
+                               :ref                       => :manager_ref}},
           {:security_group =>
-             {:inventory_collection_name => :security_groups,
-              :reference                 => {:source_ref => "security_group_0"},
-              :ref                       => :manager_ref},
+                              {:inventory_collection_name => :security_groups,
+                               :reference                 => {:source_ref => "security_group_0"},
+                               :ref                       => :manager_ref},
            :vm             =>
-             {:inventory_collection_name => :vms,
-              :reference                 => {:source_ref => "instance_0"},
-              :ref                       => :manager_ref}}]
+                              {:inventory_collection_name => :vms,
+                               :reference                 => {:source_ref => "instance_0"},
+                               :ref                       => :manager_ref}}
+        ]
       )
     )
   end
@@ -512,31 +518,32 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
       match_array(
         [
           {:extra         =>
-             {:ipv_6_cidr_block_association_set => [],
-              :cidr_block_association_set       => [],
-              :dhcp_options_id                  => nil,
-              :is_default                       => nil,
-              :instance_tenancy                 => nil},
+                             {:ipv_6_cidr_block_association_set => [],
+                              :cidr_block_association_set       => [],
+                              :dhcp_options_id                  => nil,
+                              :is_default                       => nil,
+                              :instance_tenancy                 => nil},
            :name          => "vpc_0",
            :source_ref    => "vpc_0",
            :source_region =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-east-1"},
-              :ref                       => :manager_ref},
+                             {:inventory_collection_name => :source_regions,
+                              :reference                 => {:source_ref => "us-east-1"},
+                              :ref                       => :manager_ref},
            :status        => "inactive"},
           {:extra         =>
-             {:ipv_6_cidr_block_association_set => [],
-              :cidr_block_association_set       => [],
-              :dhcp_options_id                  => nil,
-              :is_default                       => nil,
-              :instance_tenancy                 => nil},
+                             {:ipv_6_cidr_block_association_set => [],
+                              :cidr_block_association_set       => [],
+                              :dhcp_options_id                  => nil,
+                              :is_default                       => nil,
+                              :instance_tenancy                 => nil},
            :name          => "vpc_0",
            :source_ref    => "vpc_0",
            :source_region =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-west-1"},
-              :ref                       => :manager_ref},
-           :status        => "inactive"}]
+                             {:inventory_collection_name => :source_regions,
+                              :reference                 => {:source_ref => "us-west-1"},
+                              :ref                       => :manager_ref},
+           :status        => "inactive"}
+        ]
       )
     )
 
@@ -552,41 +559,42 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
       match_array(
         [
           {:extra         =>
-             {:subnet_arn                       => nil,
-              :availability_zone                => nil,
-              :available_ip_address_count       => nil,
-              :default_for_az                   => nil,
-              :map_public_ip_on_launch          => nil,
-              :assign_ipv_6_address_on_creation => nil,
-              :ipv_6_cidr_block_association_set => []},
+                             {:subnet_arn                       => nil,
+                              :availability_zone                => nil,
+                              :available_ip_address_count       => nil,
+                              :default_for_az                   => nil,
+                              :map_public_ip_on_launch          => nil,
+                              :assign_ipv_6_address_on_creation => nil,
+                              :ipv_6_cidr_block_association_set => []},
            :name          => "subnet_0",
            :network       =>
-             {:inventory_collection_name => :cloud_networks,
-              :reference                 => {:source_ref => "vpc_0"},
-              :ref                       => :manager_ref},
+                             {:inventory_collection_name => :networks,
+                              :reference                 => {:source_ref => "vpc_0"},
+                              :ref                       => :manager_ref},
            :source_ref    => "subnet_0",
            :source_region =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-east-1"},
-              :ref                       => :manager_ref}},
+                             {:inventory_collection_name => :source_regions,
+                              :reference                 => {:source_ref => "us-east-1"},
+                              :ref                       => :manager_ref}},
           {:extra         =>
-             {:subnet_arn                       => nil,
-              :availability_zone                => nil,
-              :available_ip_address_count       => nil,
-              :default_for_az                   => nil,
-              :map_public_ip_on_launch          => nil,
-              :assign_ipv_6_address_on_creation => nil,
-              :ipv_6_cidr_block_association_set => []},
+                             {:subnet_arn                       => nil,
+                              :availability_zone                => nil,
+                              :available_ip_address_count       => nil,
+                              :default_for_az                   => nil,
+                              :map_public_ip_on_launch          => nil,
+                              :assign_ipv_6_address_on_creation => nil,
+                              :ipv_6_cidr_block_association_set => []},
            :name          => "subnet_0",
            :network       =>
-             {:inventory_collection_name => :cloud_networks,
-              :reference                 => {:source_ref => "vpc_0"},
-              :ref                       => :manager_ref},
+                             {:inventory_collection_name => :networks,
+                              :reference                 => {:source_ref => "vpc_0"},
+                              :ref                       => :manager_ref},
            :source_ref    => "subnet_0",
            :source_region =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-west-1"},
-              :ref                       => :manager_ref}}]
+                             {:inventory_collection_name => :source_regions,
+                              :reference                 => {:source_ref => "us-west-1"},
+                              :ref                       => :manager_ref}}
+        ]
       )
     )
 
@@ -602,39 +610,40 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
       match_array(
         [
           {:extra         =>
-             {:ip_permissions        =>
-                [{:from_port           => 0,
-                  :ip_protocol         => "TCP",
-                  :to_port             => 0,
-                  :user_id_group_pairs => [{:vpc_id => "vpc_0"}]}],
-              :ip_permissions_egress =>
-                [{:from_port   => 0,
-                  :ip_protocol => "TCP",
-                  :ip_ranges   => [{:cidr_ip => "0.0.0.0/0"}],
-                  :to_port     => 0}]},
+                             {:ip_permissions        =>
+                                                        [{:from_port           => 0,
+                                                          :ip_protocol         => "TCP",
+                                                          :to_port             => 0,
+                                                          :user_id_group_pairs => [{:vpc_id => "vpc_0"}]}],
+                              :ip_permissions_egress =>
+                                                        [{:from_port   => 0,
+                                                          :ip_protocol => "TCP",
+                                                          :ip_ranges   => [{:cidr_ip => "0.0.0.0/0"}],
+                                                          :to_port     => 0}]},
            :name          => "security_group_0",
            :source_ref    => "security_group_0",
            :source_region =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-east-1"},
-              :ref                       => :manager_ref}},
+                             {:inventory_collection_name => :source_regions,
+                              :reference                 => {:source_ref => "us-east-1"},
+                              :ref                       => :manager_ref}},
           {:extra         =>
-             {:ip_permissions        =>
-                [{:from_port           => 0,
-                  :ip_protocol         => "TCP",
-                  :to_port             => 0,
-                  :user_id_group_pairs => [{:vpc_id => "vpc_0"}]}],
-              :ip_permissions_egress =>
-                [{:from_port   => 0,
-                  :ip_protocol => "TCP",
-                  :ip_ranges   => [{:cidr_ip => "0.0.0.0/0"}],
-                  :to_port     => 0}]},
+                             {:ip_permissions        =>
+                                                        [{:from_port           => 0,
+                                                          :ip_protocol         => "TCP",
+                                                          :to_port             => 0,
+                                                          :user_id_group_pairs => [{:vpc_id => "vpc_0"}]}],
+                              :ip_permissions_egress =>
+                                                        [{:from_port   => 0,
+                                                          :ip_protocol => "TCP",
+                                                          :ip_ranges   => [{:cidr_ip => "0.0.0.0/0"}],
+                                                          :to_port     => 0}]},
            :name          => "security_group_0",
            :source_ref    => "security_group_0",
            :source_region =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-west-1"},
-              :ref                       => :manager_ref}}]
+                             {:inventory_collection_name => :source_regions,
+                              :reference                 => {:source_ref => "us-west-1"},
+                              :ref                       => :manager_ref}}
+        ]
       )
     )
 
@@ -654,26 +663,26 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
           :size              => 1_073_741_824,
           :source_created_at => Time.parse("2019-02-20 09:53:48 UTC").utc,
           :volume_type       =>
-            {:inventory_collection_name => :volume_types,
-             :reference                 => {:source_ref => "standard"},
-             :ref                       => :manager_ref},
+                                {:inventory_collection_name => :volume_types,
+                                 :reference                 => {:source_ref => "standard"},
+                                 :ref                       => :manager_ref},
           :source_region     =>
-            {:inventory_collection_name => :source_regions,
-             :reference                 => {:source_ref => "us-east-1"},
-             :ref                       => :manager_ref}},
+                                {:inventory_collection_name => :source_regions,
+                                 :reference                 => {:source_ref => "us-east-1"},
+                                 :ref                       => :manager_ref}},
          {:source_ref        => "volume_id_0",
           :name              => "volume_0",
           :state             => "in-use",
           :size              => 1_073_741_824,
           :source_created_at => Time.parse("2019-02-20 09:53:48 UTC").utc,
           :volume_type       =>
-            {:inventory_collection_name => :volume_types,
-             :reference                 => {:source_ref => "standard"},
-             :ref                       => :manager_ref},
+                                {:inventory_collection_name => :volume_types,
+                                 :reference                 => {:source_ref => "standard"},
+                                 :ref                       => :manager_ref},
           :source_region     =>
-            {:inventory_collection_name => :source_regions,
-             :reference                 => {:source_ref => "us-west-1"},
-             :ref                       => :manager_ref}}]
+                                {:inventory_collection_name => :source_regions,
+                                 :reference                 => {:source_ref => "us-west-1"},
+                                 :ref                       => :manager_ref}}]
       )
     )
   end
@@ -738,33 +747,35 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
         [
           {
             :service_offering  =>
-              {:inventory_collection_name => :service_offerings,
-               :reference                 => {:source_ref => "prod_1"},
-               :ref                       => :manager_ref},
+                                  {:inventory_collection_name => :service_offerings,
+                                   :reference                 => {:source_ref => "prod_1"},
+                                   :ref                       => :manager_ref},
             :service_plan      =>
-              {:inventory_collection_name => :service_plans,
-               :reference                 => {:source_ref => "prod_1__provisioning_artifact_1__path_1"},
-               :ref                       => :manager_ref},
+                                  {:inventory_collection_name => :service_plans,
+                                   :reference                 => {:source_ref => "prod_1__provisioning_artifact_1__path_1"},
+                                   :ref                       => :manager_ref},
             :source_created_at => Time.parse("2016-08-10 16:42:01 +0200").utc,
             :source_ref        => "id_0",
             :source_region     =>
-              {:inventory_collection_name => :source_regions,
-               :reference                 => {:source_ref => "us-east-1"},
-               :ref                       => :manager_ref}},
+                                  {:inventory_collection_name => :source_regions,
+                                   :reference                 => {:source_ref => "us-east-1"},
+                                   :ref                       => :manager_ref}
+          },
           {:service_offering  =>
-             {:inventory_collection_name => :service_offerings,
-              :reference                 => {:source_ref => "prod_1"},
-              :ref                       => :manager_ref},
+                                 {:inventory_collection_name => :service_offerings,
+                                  :reference                 => {:source_ref => "prod_1"},
+                                  :ref                       => :manager_ref},
            :service_plan      =>
-             {:inventory_collection_name => :service_plans,
-              :reference                 => {:source_ref => "prod_1__provisioning_artifact_1__path_1"},
-              :ref                       => :manager_ref},
+                                 {:inventory_collection_name => :service_plans,
+                                  :reference                 => {:source_ref => "prod_1__provisioning_artifact_1__path_1"},
+                                  :ref                       => :manager_ref},
            :source_created_at => Time.parse("2016-08-10 16:42:01 +0200").utc,
            :source_ref        => "id_0",
            :source_region     =>
-             {:inventory_collection_name => :source_regions,
-              :reference                 => {:source_ref => "us-west-1"},
-              :ref                       => :manager_ref}}]
+                                 {:inventory_collection_name => :source_regions,
+                                  :reference                 => {:source_ref => "us-west-1"},
+                                  :ref                       => :manager_ref}}
+        ]
       )
     )
   end
@@ -778,25 +789,28 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
           {
             :name             => "name_0 provisioning_artifact_1_name path_1_name",
             :service_offering =>
-              {:inventory_collection_name => :service_offerings,
-               :reference                 => {:source_ref => "prod_0"},
-               :ref                       => :manager_ref},
+                                 {:inventory_collection_name => :service_offerings,
+                                  :reference                 => {:source_ref => "prod_0"},
+                                  :ref                       => :manager_ref},
             :source_ref       => "prod_0__provisioning_artifact_1__path_1",
             :source_region    =>
-              {:inventory_collection_name => :source_regions,
-               :reference                 => {:source_ref => "us-east-1"},
-               :ref                       => :manager_ref}},
+                                 {:inventory_collection_name => :source_regions,
+                                  :reference                 => {:source_ref => "us-east-1"},
+                                  :ref                       => :manager_ref}
+          },
           {
             :name             => "name_0 provisioning_artifact_1_name path_1_name",
             :service_offering =>
-              {:inventory_collection_name => :service_offerings,
-               :reference                 => {:source_ref => "prod_0"},
-               :ref                       => :manager_ref},
+                                 {:inventory_collection_name => :service_offerings,
+                                  :reference                 => {:source_ref => "prod_0"},
+                                  :ref                       => :manager_ref},
             :source_ref       => "prod_0__provisioning_artifact_1__path_1",
             :source_region    =>
-              {:inventory_collection_name => :source_regions,
-               :reference                 => {:source_ref => "us-west-1"},
-               :ref                       => :manager_ref}}]
+                                 {:inventory_collection_name => :source_regions,
+                                  :reference                 => {:source_ref => "us-west-1"},
+                                  :ref                       => :manager_ref}
+          }
+        ]
       )
     )
   end
@@ -850,14 +864,14 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
           :memory     => 2_064_805_527_552,
           :cpus       => 2,
           :extra      =>
-            {:attributes =>
-               {:dedicatedEbsThroughput => "6000 Mbps",
-                :physicalProcessor      => "Intel Xeon Platinum 8175",
-                :clockSpeed             => "2.5 GHz",
-                :ecu                    => "173",
-                :networkPerformance     => "10 Gigabit",
-                :processorFeatures      => "Intel AVX, Intel AVX2, Intel AVX512, Intel Turbo"},
-             :prices     => {:OnDemand => nil}}}]
+                         {:attributes =>
+                                         {:dedicatedEbsThroughput => "6000 Mbps",
+                                          :physicalProcessor      => "Intel Xeon Platinum 8175",
+                                          :clockSpeed             => "2.5 GHz",
+                                          :ecu                    => "173",
+                                          :networkPerformance     => "10 Gigabit",
+                                          :processorFeatures      => "Intel AVX, Intel AVX2, Intel AVX512, Intel Turbo"},
+                          :prices     => {:OnDemand => nil}}}]
       )
     )
   end
@@ -871,18 +885,18 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
           :name        => "standard",
           :description => "Magnetic",
           :extra       =>
-            {:storageMedia  => "HDD-backed",
-             :volumeType    => "Magnetic",
-             :maxIopsvolume => "40 - 200",
-             :maxVolumeSize => "1 TiB"}},
+                          {:storageMedia  => "HDD-backed",
+                           :volumeType    => "Magnetic",
+                           :maxIopsvolume => "40 - 200",
+                           :maxVolumeSize => "1 TiB"}},
          {:source_ref  => "gp2",
           :name        => "gp2",
           :description => "General Purpose",
           :extra       =>
-            {:storageMedia  => "SSD-backed",
-             :volumeType    => "General Purpose",
-             :maxIopsvolume => "16000",
-             :maxVolumeSize => "16 TiB"}}]
+                          {:storageMedia  => "SSD-backed",
+                           :volumeType    => "General Purpose",
+                           :maxIopsvolume => "16000",
+                           :maxVolumeSize => "16 TiB"}}]
       )
     )
   end
@@ -893,7 +907,8 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
                               :record_error => nil)
 
     collector = TopologicalInventory::Amazon::Collector.new(
-      "source", "access_key_id", "secret_access_key", metrics)
+      "source", "access_key_id", "secret_access_key", metrics
+    )
     allow(collector).to receive(:save_inventory).and_return(1)
     allow(collector).to receive(:sweep_inventory)
     allow(collector).to receive(:create_parser).and_return(parser)
@@ -916,7 +931,7 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
     stub_responses_per_service.each do |service, stub_responses|
       raise "Aws.config[#{service}][:stub_responses] already set" if Aws.config.fetch(service, {})[:stub_responses]
 
-      Aws.config[service]                  ||= {}
+      Aws.config[service] ||= {}
       Aws.config[service][:stub_responses] = stub_responses
     end
     yield
