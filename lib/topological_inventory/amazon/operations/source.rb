@@ -1,4 +1,5 @@
 require "sources-api-client"
+require "active_support/core_ext/numeric/time"
 require "topological_inventory/amazon/connection"
 require "topological_inventory/amazon/operations/core/authentication_retriever"
 

@@ -5,6 +5,8 @@ if ENV['CI']
   SimpleCov.start
 end
 
+require "rspec"
+require "webmock/rspec"
 require "topological_inventory/amazon/collector"
 
 RSpec.configure do |config|
