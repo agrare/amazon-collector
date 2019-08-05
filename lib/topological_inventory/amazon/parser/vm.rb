@@ -73,7 +73,7 @@ module TopologicalInventory::Amazon
         )
 
         collections[:ipaddresses].data << TopologicalInventoryIngressApiClient::Ipaddress.new(
-          :source_ref      => "#{instance.instance_id}___#{""}___#{instance.private_ip_address}",
+          :source_ref      => "#{instance.instance_id}______#{instance.private_ip_address}",
           :ipaddress       => instance.private_ip_address,
           :network_adapter => lazy_find(:network_adapters, :source_ref => instance.instance_id),
           :source_region   => lazy_find(:source_regions, :source_ref => scope[:region]),

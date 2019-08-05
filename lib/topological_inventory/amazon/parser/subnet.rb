@@ -21,7 +21,7 @@ module TopologicalInventory::Amazon
             :ipv_6_cidr_block_association_set => (subnet.ipv_6_cidr_block_association_set || []).map(&:to_h)
 
           },
-          :cloud_network       => network,
+          :network             => network,
           :source_region       => lazy_find(:source_regions, :source_ref => scope[:region]),
           :orchestration_stack => stack
         )

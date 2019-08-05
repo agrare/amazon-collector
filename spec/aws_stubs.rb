@@ -367,6 +367,11 @@ module AwsStubs
             :network_interface_id => "interface_#{i}",
             :mac_address          => "06:d5:e7:4e:c8:01",
           }
+        ],
+        :security_groups => [
+          {
+            :group_id => "security_group_#{i}"
+          }
         ]
       }
     end
