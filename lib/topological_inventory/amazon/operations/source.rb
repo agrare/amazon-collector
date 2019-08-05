@@ -81,7 +81,7 @@ module TopologicalInventory
         end
 
         def region
-          ENV["REGION"] || "us-east-1"
+          "us-east-1"
         end
       end
     end
