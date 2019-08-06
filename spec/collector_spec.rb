@@ -13,42 +13,59 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
 
     expect(format_hash(:vms, parser)).to(
       match_array(
-        [{:source_ref    => "instance_0",
-          :uid_ems       => "instance_0",
-          :name          => "instance_0",
-          :power_state   => "on",
-          :mac_addresses => ["06:d5:e7:4e:c8:01"],
-          :flavor        =>
-                            {:inventory_collection_name => :flavors,
-                             :reference                 => {:source_ref => "m3.medium"},
-                             :ref                       => :manager_ref}},
-         {:source_ref    => "instance_ec2_0",
-          :uid_ems       => "instance_ec2_0",
-          :name          => "instance_ec2_0",
-          :power_state   => "on",
-          :mac_addresses => [],
-          :flavor        =>
-                            {:inventory_collection_name => :flavors,
-                             :reference                 => {:source_ref => "m3.medium"},
-                             :ref                       => :manager_ref}},
-         {:source_ref    => "instance_0",
-          :uid_ems       => "instance_0",
-          :name          => "instance_0",
-          :power_state   => "on",
-          :mac_addresses => ["06:d5:e7:4e:c8:01"],
-          :flavor        =>
-                            {:inventory_collection_name => :flavors,
-                             :reference                 => {:source_ref => "m3.medium"},
-                             :ref                       => :manager_ref}},
-         {:source_ref    => "instance_ec2_0",
-          :uid_ems       => "instance_ec2_0",
-          :name          => "instance_ec2_0",
-          :power_state   => "on",
-          :mac_addresses => [],
-          :flavor        =>
-                            {:inventory_collection_name => :flavors,
-                             :reference                 => {:source_ref => "m3.medium"},
-                             :ref                       => :manager_ref}}]
+        [
+          {:flavor        =>
+             {:inventory_collection_name => :flavors,
+              :reference                 => {:source_ref => "m3.medium"},
+              :ref                       => :manager_ref},
+           :mac_addresses => ["06:d5:e7:4e:c8:01"],
+           :name          => "instance_0",
+           :power_state   => "on",
+           :source_ref    => "instance_0",
+           :source_region =>
+             {:inventory_collection_name => :source_regions,
+              :reference                 => {:source_ref => "us-east-1"},
+              :ref                       => :manager_ref},
+           :uid_ems       => "instance_0"},
+          {:flavor        =>
+             {:inventory_collection_name => :flavors,
+              :reference                 => {:source_ref => "m3.medium"},
+              :ref                       => :manager_ref},
+           :mac_addresses => [],
+           :name          => "instance_ec2_0",
+           :power_state   => "on",
+           :source_ref    => "instance_ec2_0",
+           :source_region =>
+             {:inventory_collection_name => :source_regions,
+              :reference                 => {:source_ref => "us-east-1"},
+              :ref                       => :manager_ref},
+           :uid_ems       => "instance_ec2_0"},
+          {:flavor        =>
+             {:inventory_collection_name => :flavors,
+              :reference                 => {:source_ref => "m3.medium"},
+              :ref                       => :manager_ref},
+           :mac_addresses => ["06:d5:e7:4e:c8:01"],
+           :name          => "instance_0",
+           :power_state   => "on",
+           :source_ref    => "instance_0",
+           :source_region =>
+             {:inventory_collection_name => :source_regions,
+              :reference                 => {:source_ref => "us-west-1"},
+              :ref                       => :manager_ref},
+           :uid_ems       => "instance_0"},
+          {:flavor        =>
+             {:inventory_collection_name => :flavors,
+              :reference                 => {:source_ref => "m3.medium"},
+              :ref                       => :manager_ref},
+           :mac_addresses => [],
+           :name          => "instance_ec2_0",
+           :power_state   => "on",
+           :source_ref    => "instance_ec2_0",
+           :source_region =>
+             {:inventory_collection_name => :source_regions,
+              :reference                 => {:source_ref => "us-west-1"},
+              :ref                       => :manager_ref},
+           :uid_ems       => "instance_ec2_0"}]
       )
     )
 
