@@ -41,6 +41,26 @@ module TopologicalInventory
         def volumes(scope)
           ec2_connection(scope).client.describe_volumes[:volumes]
         end
+
+        def networks(scope)
+          ec2_connection(scope).client.describe_vpcs[:vpcs]
+        end
+
+        def subnets(scope)
+          ec2_connection(scope).client.describe_subnets[:subnets]
+        end
+
+        def security_groups(scope)
+          ec2_connection(scope).security_groups
+        end
+
+        def network_adapters(scope)
+          ec2_connection(scope).client.describe_network_interfaces.network_interfaces
+        end
+
+        def floating_ips(scope)
+          ec2_connection(scope).client.describe_addresses.addresses
+        end
       end
     end
   end

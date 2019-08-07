@@ -41,7 +41,11 @@ module AwsStubs
         :instance_id   => "instance_#{i}",
         :allocation_id => "allocation_#{i}",
         :public_ip     => "54.#{(i / 255) == 0 ? 0 : i % (i / 255)}.#{i / 255}.#{i % 255}",
-        :domain        => "vpc"
+        :domain        => "vpc",
+        :tags          => [
+          {:key => "is_floating", :value => "true"},
+          {:key => "color", :value => "void"}
+        ]
       }
     end
     {:addresses => floating_ips}
@@ -332,7 +336,11 @@ module AwsStubs
         :group_id              => "security_group_#{i}",
         :vpc_id                => "vpc_#{i}",
         :ip_permissions        => inbound_firewall_rules,
-        :ip_permissions_egress => outbound_firewall_rules
+        :ip_permissions_egress => outbound_firewall_rules,
+        :tags                  => [
+          {:key => "is_secure", :value => "true"},
+          {:key => "dimension", :value => "void_42"}
+        ]
       }
     end
     {:security_groups => mocked_security_groups}
@@ -366,6 +374,11 @@ module AwsStubs
           {
             :network_interface_id => "interface_#{i}",
             :mac_address          => "06:d5:e7:4e:c8:01",
+          }
+        ],
+        :security_groups    => [
+          {
+            :group_id => "security_group_#{i}"
           }
         ]
       }
