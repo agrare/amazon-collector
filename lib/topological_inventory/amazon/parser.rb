@@ -78,7 +78,7 @@ module TopologicalInventory
       end
 
       def get_from_tags(tags, tag_name)
-        tags.detect { |tag| tag.key.downcase == tag_name.to_s.downcase }&.value
+        (tags || []).detect { |tag| tag.key.downcase == tag_name.to_s.downcase }&.value
       end
     end
   end
