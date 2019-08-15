@@ -14,8 +14,12 @@ module TopologicalInventory::Amazon
       File.expand_path("../../../config", File.dirname(__FILE__))
     end
 
-    def new_collector(source)
-      TopologicalInventory::Amazon::Collector.new(source.source, source.access_key_id, source.secret_access_key, metrics)
+    def path_to_secrets
+      File.expand_path("../../../secret", File.dirname(__FILE__))
+    end
+
+    def new_collector(source, secret)
+      TopologicalInventory::Amazon::Collector.new(source.source, secret['username'], secret['password'], metrics)
     end
   end
 end
