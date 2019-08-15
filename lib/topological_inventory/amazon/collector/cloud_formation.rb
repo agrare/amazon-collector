@@ -3,7 +3,7 @@ module TopologicalInventory
     class Collector
       module CloudFormation
         def orchestration_stacks(scope)
-          cloud_formation_connection(scope).client.describe_stacks[:stacks]
+          paginated_query(scope, :cloud_formation_connection, :stacks)
         end
 
         private
