@@ -6,7 +6,7 @@ module TopologicalInventory
           # We want to collect this for only default region, since all regions return the same result
           return [] unless scope[:region] == default_region
 
-          ec2_connection(scope).client.describe_regions.regions
+          paginated_query(scope, :ec2_connection, :regions)
         end
 
         def vms(scope)
@@ -14,11 +14,11 @@ module TopologicalInventory
         end
 
         def availability_zones(scope)
-          ec2_connection(scope).client.describe_availability_zones[:availability_zones]
+          paginated_query(scope, :ec2_connection, :availability_zones)
         end
 
         def key_pairs(scope)
-          ec2_connection(scope).client.describe_key_pairs[:key_pairs]
+          paginated_query(scope, :ec2_connection, :key_pairs)
         end
 
         def private_images(scope)
@@ -39,27 +39,27 @@ module TopologicalInventory
         end
 
         def volumes(scope)
-          ec2_connection(scope).client.describe_volumes[:volumes]
+          paginated_query(scope, :ec2_connection, :volumes)
         end
 
         def networks(scope)
-          ec2_connection(scope).client.describe_vpcs[:vpcs]
+          paginated_query(scope, :ec2_connection, :vpcs)
         end
 
         def subnets(scope)
-          ec2_connection(scope).client.describe_subnets[:subnets]
+          paginated_query(scope, :ec2_connection, :subnets)
         end
 
         def security_groups(scope)
-          ec2_connection(scope).security_groups
+          paginated_query(scope, :ec2_connection, :security_groups)
         end
 
         def network_adapters(scope)
-          ec2_connection(scope).client.describe_network_interfaces.network_interfaces
+          paginated_query(scope, :ec2_connection, :network_interfaces)
         end
 
         def floating_ips(scope)
-          ec2_connection(scope).client.describe_addresses.addresses
+          paginated_query(scope, :ec2_connection, :addresses)
         end
       end
     end

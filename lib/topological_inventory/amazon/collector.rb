@@ -177,6 +177,17 @@ module TopologicalInventory
       def inventory_name
         "Amazon"
       end
+
+      def paginated_query(scope, connection, collection_name)
+        func = lambda do |&blk|
+          send(connection, scope).client.public_send("describe_#{collection_name.to_s}").each do |result|
+            result.public_send(collection_name).each do |item|
+              blk.call(item, scope)
+            end
+          end
+        end
+        Iterator.new(func, "Couldn't fetch '#{collection_name}' from #{connection} with #{scope}")
+      end
     end
   end
 end
