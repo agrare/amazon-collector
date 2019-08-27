@@ -11,11 +11,14 @@ gem "more_core_extensions"
 gem "optimist"
 gem "prometheus_exporter", "~> 0.4.5"
 gem "rake"
+gem "rest-client", "~>2.0"
+gem "sources-api-client",                       :git => "https://github.com/ManageIQ/sources-api-client-ruby", :branch => "master"
 gem "topological_inventory-ingress_api-client", :git => "https://github.com/ManageIQ/topological_inventory-ingress_api-client-ruby", :branch => "master"
 
-group :test, :devlopment do
+group :test, :development do
   gem "rspec"
   gem "simplecov"
+  gem "webmock"
 end
 
 # Collector
