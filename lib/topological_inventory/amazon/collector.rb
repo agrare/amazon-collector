@@ -32,7 +32,7 @@ module TopologicalInventory
       end
 
       def collect!
-        loop do
+        until finished?
           begin
             entity_types.each do |entity_type|
               process_entity(entity_type)
