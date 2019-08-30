@@ -7,7 +7,7 @@ end
 
 require "rspec"
 require "webmock/rspec"
-require "topological_inventory/amazon/collector"
+require "topological_inventory/amazon/collectors_pool"
 
 RSpec.configure do |config|
   # Disable RSpec exposing methods globally on `Module` and `main`

@@ -18,6 +18,15 @@ module TopologicalInventory::Amazon
       File.expand_path("../../../secret", File.dirname(__FILE__))
     end
 
+    def source_valid?(source, secret)
+      missing_data = [source.source,
+                      secret["username"],
+                      secret["password"]].select do |data|
+        data.to_s.strip.blank?
+      end
+      missing_data.empty?
+    end
+
     def new_collector(source, secret)
       TopologicalInventory::Amazon::Collector.new(source.source, secret['username'], secret['password'], metrics)
     end
