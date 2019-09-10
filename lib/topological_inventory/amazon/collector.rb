@@ -1,14 +1,13 @@
 require "concurrent"
-require "topological_inventory-ingress_api-client/collector"
+require "topological_inventory/providers/common/collector"
 require "topological_inventory/amazon/connection"
 require "topological_inventory/amazon/parser"
 require "topological_inventory/amazon/iterator"
 require "topological_inventory/amazon/logging"
-require "topological_inventory-ingress_api-client"
 
 module TopologicalInventory
   module Amazon
-    class Collector < ::TopologicalInventoryIngressApiClient::Collector
+    class Collector < ::TopologicalInventory::Providers::Common::Collector
       include Logging
 
       require "topological_inventory/amazon/collector/cloud_formation"
