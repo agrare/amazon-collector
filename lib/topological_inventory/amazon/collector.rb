@@ -27,6 +27,7 @@ module TopologicalInventory
               :poll_time     => poll_time)
 
         self.secret_access_key = secret_access_key
+        self.sub_account_role  = sub_account_role
         self.access_key_id     = access_key_id
         self.metrics           = metrics
       end
@@ -34,8 +35,9 @@ module TopologicalInventory
       def collect!
         until finished?
           begin
-            regions          = ec2_connection(:region => default_region).client.describe_regions.regions.map(&:region_name)
-            accounts         = list_accounts(sub_account_role)
+            # TODO(lsmola): should we list regions per account? Each account can have different regions allowed
+            regions  = list_regions
+            accounts = list_accounts(sub_account_role)
 
             # Scan accounts first, to see which are accessible and use only those
             accounts.delete_if {|account| !valid_account?(default_region, account, sub_account_role)}
@@ -54,7 +56,7 @@ module TopologicalInventory
 
       private
 
-      attr_accessor :log, :metrics, :secret_access_key, :access_key_id
+      attr_accessor :log, :metrics, :secret_access_key, :access_key_id, :sub_account_role
 
       def process_entity(entity_type, regions, accounts, sub_account_role)
         parser      = create_parser
@@ -109,26 +111,28 @@ module TopologicalInventory
       # Get all accounts inside AWS organization
       def list_accounts(sub_account_role)
         accounts = []
-        begin
-          master_account_id = organizations_connection(:region => default_region).client.describe_organization&.organization&.master_account_id
-        rescue Aws::Organizations::Errors::AccessDeniedException => e
-          logger.warn("Can't access describe_organization API, [#{e.class}, #{e.message}]")
-        end
 
         # If we were able to load master account and we have role defined for sub account access, we can load
         # a list of subaccounts
-        if master_account_id && sub_account_role
+        if sub_account_role
           begin
-            paginated_query({:region => default_region}, :organizations_connection,
-                            :accounts, :listing_keyword => "list").each do |account|
-              accounts << {
-                :account_id   => account.id,
-                :master       => account.id == master_account_id,
-                :account_name => account.name
-              }
-            end
+            master_account_id = organizations_connection(:region => default_region).client.describe_organization&.organization&.master_account_id
           rescue Aws::Organizations::Errors::AccessDeniedException => e
-            logger.warn("Can't access list_organizations API, [#{e.class}, #{e.message}]")
+            logger.warn("Can't access describe_organization API, [#{e.class}, #{e.message}]")
+          end
+          if master_account_id
+            begin
+              paginated_query({:region => default_region}, :organizations_connection,
+                              :accounts, :listing_keyword => "list").each do |account|
+                accounts << {
+                  :account_id   => account.id,
+                  :master       => account.id == master_account_id,
+                  :account_name => account.name
+                }
+              end
+            rescue Aws::Organizations::Errors::AccessDeniedException => e
+              logger.warn("Can't access list_organizations API, [#{e.class}, #{e.message}]")
+            end
           end
         end
 
@@ -143,6 +147,10 @@ module TopologicalInventory
         end
 
         accounts
+      end
+
+      def list_regions
+        ec2_connection(:region => default_region).client.describe_regions.regions.map(&:region_name)
       end
 
       # Collect, parse and save entity data

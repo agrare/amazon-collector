@@ -56,7 +56,8 @@ TopologicalInventoryIngressApiClient.configure.host   = "#{ingress_api_uri.host}
 begin
   metrics = TopologicalInventory::Amazon::Collector::ApplicationMetrics.new(args[:metrics_port])
   if args[:config].nil?
-    collector = TopologicalInventory::Amazon::Collector.new(args[:source], args[:access_key_id], args[:secret_access_key], metrics)
+    collector = TopologicalInventory::Amazon::Collector.new(
+      args[:source], args[:access_key_id], args[:secret_access_key], args[:sub_account_role], metrics)
     collector.collect!
   else
     pool = TopologicalInventory::Amazon::CollectorsPool.new(args[:config], metrics)
