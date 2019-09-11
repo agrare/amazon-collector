@@ -35,15 +35,16 @@ module TopologicalInventory
       def collect!
         until finished?
           begin
-            # TODO(lsmola): should we list regions per account? Each account can have different regions allowed
+            # TODO(lsmola): should we list regions per account? Each account can have different regions allowed. Also
+            # right now we fetch regions of each account when checking access, so we can just load them
             regions  = list_regions
-            accounts = list_accounts(sub_account_role)
+            accounts = list_accounts
 
             # Scan accounts first, to see which are accessible and use only those
-            accounts.delete_if {|account| !valid_account?(default_region, account, sub_account_role)}
+            accounts.delete_if {|account| !valid_account?(default_region, account)}
 
             entity_types.each do |entity_type|
-              process_entity(entity_type, regions, accounts, sub_account_role)
+              process_entity(entity_type, regions, accounts)
             end
           rescue => e
             logger.error(e)
@@ -58,7 +59,7 @@ module TopologicalInventory
 
       attr_accessor :log, :metrics, :secret_access_key, :access_key_id, :sub_account_role
 
-      def process_entity(entity_type, regions, accounts, sub_account_role)
+      def process_entity(entity_type, regions, accounts)
         parser      = create_parser
         total_parts = 0
         sweep_scope = Set.new([entity_type.to_sym])
@@ -70,7 +71,7 @@ module TopologicalInventory
 
         accounts.each do |account|
           regions.each do |region|
-            scope = build_scope(region, account, sub_account_role)
+            scope = build_scope(region, account)
 
             # Collect, parse and save entity data
             parser, count, total_parts, sweep_scope = save_entity(entity_type, refresh_state_uuid, parser, scope, count, total_parts, sweep_scope)
@@ -99,7 +100,7 @@ module TopologicalInventory
         logger.info("Sweeping inactive records for #{sweep_scope} with :refresh_state_uuid => '#{refresh_state_uuid}'...Complete")
       end
 
-      def build_scope(region, account, sub_account_role)
+      def build_scope(region, account)
         scope = {:region => region}.merge(account)
         if !account[:master]
           # If account is not master, lets try to assume role
@@ -109,7 +110,7 @@ module TopologicalInventory
       end
 
       # Get all accounts inside AWS organization
-      def list_accounts(sub_account_role)
+      def list_accounts
         accounts = []
 
         # If we were able to load master account and we have role defined for sub account access, we can load
@@ -215,8 +216,8 @@ module TopologicalInventory
         {:access_key_id => access_key_id, :secret_access_key => secret_access_key}
       end
 
-      def valid_account?(region, account, sub_account_role)
-        scope = build_scope(region, account, sub_account_role)
+      def valid_account?(region, account)
+        scope = build_scope(region, account)
         ec2_connection(scope).client.describe_regions.regions.map(&:region_name)
         true
       rescue Aws::STS::Errors::AccessDenied => e
