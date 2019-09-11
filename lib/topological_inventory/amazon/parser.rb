@@ -77,6 +77,12 @@ module TopologicalInventory
         )
       end
 
+      def lazy_find_subscription(scope)
+        if scope[:account_id]
+          lazy_find(:subscriptions, :source_ref => scope[:account_id])
+        end
+      end
+
       def get_from_tags(tags, tag_name)
         (tags || []).detect { |tag| tag.key.downcase == tag_name.to_s.downcase }&.value
       end

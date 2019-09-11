@@ -26,6 +26,7 @@ module TopologicalInventory::Amazon
             :source_dest_check => interface.source_dest_check,
           },
           :source_region       => lazy_find(:source_regions, :source_ref => scope[:region]),
+          :subscription        => lazy_find_subscription(scope),
           :orchestration_stack => stack,
           :device              => device,
         )
