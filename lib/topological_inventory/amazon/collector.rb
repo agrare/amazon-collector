@@ -67,8 +67,8 @@ module TopologicalInventory
 
         count = 0
 
-        regions.each do |region|
-          accounts.each do |account|
+        accounts.each do |account|
+          regions.each do |region|
             scope = build_scope(region, account, sub_account_role)
 
             # Collect, parse and save entity data
@@ -110,18 +110,30 @@ module TopologicalInventory
       # Get all accounts inside AWS organization
       def list_accounts
         accounts = []
-        master_account_id = organizations_connection(:region => default_region).client.describe_organization&.organization&.master_account_id
+        begin
+          master_account_id = organizations_connection(:region => default_region).client.describe_organization&.organization&.master_account_id
+        rescue Aws::Organizations::Errors::AccessDeniedException => e
+          logger.warn("Can't access describe_organization API, [#{e.class}, #{e.message}]")
+        end
+
         if master_account_id
-          paginated_query({:region => default_region}, :organizations_connection,
-                          :accounts, :listing_keyword => "list").each do |account|
-            accounts << {
-              :account_id   => account.id,
-              :master       => account.id == master_account_id,
-              :account_name => account.name
-            }
+          begin
+            paginated_query({:region => default_region}, :organizations_connection,
+                            :accounts, :listing_keyword => "list").each do |account|
+              accounts << {
+                :account_id   => account.id,
+                :master       => account.id == master_account_id,
+                :account_name => account.name
+              }
+            end
+          rescue Aws::Organizations::Errors::AccessDeniedException => e
+            logger.warn("Can't access list_organizations API, [#{e.class}, #{e.message}]")
           end
-        else
-          # TODO(lsmola): can we get id of the account from the api?
+        end
+
+        # If we are not able to scan organization just add current creds as a master account
+        if accounts.empty?
+          # TODO(lsmola): try to fetch account number from other API
           accounts << {
             :account_id   => nil,
             :master       => true,
