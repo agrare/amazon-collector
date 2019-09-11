@@ -1019,14 +1019,17 @@ RSpec.describe TopologicalInventory::Amazon::Collector do
                               :record_error => nil)
 
     collector = TopologicalInventory::Amazon::Collector.new(
-      "source", "access_key_id", "secret_access_key", metrics
+      "source", "access_key_id", "secret_access_key", nil, metrics
     )
     allow(collector).to receive(:save_inventory).and_return(1)
     allow(collector).to receive(:sweep_inventory)
     allow(collector).to receive(:create_parser).and_return(parser)
 
     with_aws_stubbed(stub_responses) do
-      collector.send(:process_entity, entity)
+      regions = collector.send(:list_regions)
+      accounts = collector.send(:list_accounts)
+
+      collector.send(:process_entity, entity, regions, accounts)
     end
     parser
   end
