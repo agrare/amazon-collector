@@ -13,11 +13,13 @@ module TopologicalInventory
 
       require "topological_inventory/amazon/collector/cloud_formation"
       require "topological_inventory/amazon/collector/ec2"
+      require "topological_inventory/amazon/collector/organizations"
       require "topological_inventory/amazon/collector/pricing"
       require "topological_inventory/amazon/collector/service_catalog"
 
       include Amazon::Collector::CloudFormation
       include Amazon::Collector::Ec2
+      include Amazon::Collector::Organizations
       include Amazon::Collector::Pricing
       include Amazon::Collector::ServiceCatalog
 
@@ -109,45 +111,8 @@ module TopologicalInventory
         scope
       end
 
-      # Get all accounts inside AWS organization
       def list_accounts
-        accounts = []
-
-        # If we were able to load master account and we have role defined for sub account access, we can load
-        # a list of subaccounts
-        if sub_account_role
-          begin
-            master_account_id = organizations_connection(:region => default_region).client.describe_organization&.organization&.master_account_id
-          rescue Aws::Organizations::Errors::AccessDeniedException => e
-            logger.warn("Can't access describe_organization API, [#{e.class}, #{e.message}]")
-          end
-          if master_account_id
-            begin
-              paginated_query({:region => default_region}, :organizations_connection,
-                              :accounts, :listing_keyword => "list").each do |account|
-                accounts << {
-                  :account_id   => account.id,
-                  :master       => account.id == master_account_id,
-                  :account_name => account.name
-                }
-              end
-            rescue Aws::Organizations::Errors::AccessDeniedException => e
-              logger.warn("Can't access list_organizations API, [#{e.class}, #{e.message}]")
-            end
-          end
-        end
-
-        # If we are not able to scan organization just add current creds as a master account
-        if accounts.empty?
-          # TODO(lsmola): try to fetch account number from other API
-          accounts << {
-            :account_id   => nil,
-            :master       => true,
-            :account_name => nil
-          }
-        end
-
-        accounts
+        subscriptions(:region => default_region, :master => true)
       end
 
       def list_regions
@@ -155,8 +120,11 @@ module TopologicalInventory
       end
 
       # Collect, parse and save entity data
-      def save_entity(entity_type, refresh_state_uuid, parser, scope, count, total_parts, sweep_scope)
-        send(entity_type.to_s, scope).each do |entity|
+      def save_entity(entity_type, refresh_state_uuid, parser, scope, count, total_parts, sweep_scope, entities_iterator: nil)
+        iterator = entities_iterator
+        iterator ||= send(entity_type.to_s, scope)
+
+        iterator.each do |entity|
           count += 1
           parser.send("parse_#{entity_type}", entity, scope)
 
@@ -185,6 +153,14 @@ module TopologicalInventory
         Parser.new
       end
 
+      def endpoint_types
+        %w(organizations pricing ec2 service_catalog)
+      end
+
+      def organizations_entity_types
+        %w(subscriptions)
+      end
+
       def cloud_formations_entity_types
         %w(orchestrations_stacks)
       end
@@ -195,10 +171,6 @@ module TopologicalInventory
 
       def service_catalog_entity_types
         %w(service_offerings service_instances service_plans)
-      end
-
-      def endpoint_types
-        %w(pricing ec2 service_catalog)
       end
 
       def pricing_entity_types
