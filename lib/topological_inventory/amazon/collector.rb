@@ -36,7 +36,7 @@ module TopologicalInventory
           begin
             regions          = ec2_connection(:region => default_region).client.describe_regions.regions.map(&:region_name)
             accounts         = list_accounts
-            sub_account_role = "OrganizationAccountAccessRole"
+            sub_account_role = "ReadOnlyRole"
 
             # Scan accounts first, to see which are accessible and use only those
             accounts.delete_if {|account| !valid_account?(default_region, account, sub_account_role)}

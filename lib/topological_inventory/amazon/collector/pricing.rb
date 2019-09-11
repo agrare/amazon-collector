@@ -36,7 +36,7 @@ module TopologicalInventory
               result = flavors_query(scope, :next_token => result.next_token)
             end
           end
-          Iterator.new(func, "Couldn't fetch 'flavors' from Aws::Pricing.")
+          Iterator.new(func, "Couldn't fetch 'flavors' from Aws::Pricing with scope #{scope}.")
         end
 
         def volume_types(scope)
@@ -57,7 +57,7 @@ module TopologicalInventory
               result = volume_types_query(scope, :next_token => result.next_token)
             end
           end
-          Iterator.new(func, "Couldn't fetch 'volume_types' from Aws::Pricing.")
+          Iterator.new(func, "Couldn't fetch 'volume_types' from Aws::Pricing with scope #{scope}.")
         end
 
         private

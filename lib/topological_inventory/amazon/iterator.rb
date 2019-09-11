@@ -1,3 +1,5 @@
+require "topological_inventory/amazon/logging"
+
 module TopologicalInventory::Amazon
   class Iterator
     include Logging
