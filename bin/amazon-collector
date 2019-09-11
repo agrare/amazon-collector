@@ -21,6 +21,8 @@ def parse_args
         :type => :string, :default => ENV["AUTH_USERNAME"]
     opt :secret_access_key, "Secret access key for the Amazon API access",
         :type => :string, :default => ENV["AUTH_PASSWORD"]
+    opt :sub_account_role, "Role name that will be used to access all usb-accounts in the organization",
+        :type => :string, :default => ENV["SUB_ACCOUNT_ROLE"]
     opt :ingress_api, "Hostname of the ingress-api route",
         :type => :string, :default => ENV["INGRESS_API"] || "http://localhost:9292"
     opt :metrics_port, "Port to expose the metrics endpoint on, 0 to disable metrics",

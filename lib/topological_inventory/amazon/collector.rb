@@ -21,7 +21,7 @@ module TopologicalInventory
       include Amazon::Collector::Pricing
       include Amazon::Collector::ServiceCatalog
 
-      def initialize(source, access_key_id, secret_access_key, metrics, default_limit: 1_000, poll_time: 5)
+      def initialize(source, access_key_id, secret_access_key, sub_account_role, metrics, default_limit: 1_000, poll_time: 5)
         super(source,
               :default_limit => default_limit,
               :poll_time     => poll_time)
@@ -35,8 +35,7 @@ module TopologicalInventory
         until finished?
           begin
             regions          = ec2_connection(:region => default_region).client.describe_regions.regions.map(&:region_name)
-            accounts         = list_accounts
-            sub_account_role = "ReadOnlyRole"
+            accounts         = list_accounts(sub_account_role)
 
             # Scan accounts first, to see which are accessible and use only those
             accounts.delete_if {|account| !valid_account?(default_region, account, sub_account_role)}
@@ -108,7 +107,7 @@ module TopologicalInventory
       end
 
       # Get all accounts inside AWS organization
-      def list_accounts
+      def list_accounts(sub_account_role)
         accounts = []
         begin
           master_account_id = organizations_connection(:region => default_region).client.describe_organization&.organization&.master_account_id
@@ -116,7 +115,9 @@ module TopologicalInventory
           logger.warn("Can't access describe_organization API, [#{e.class}, #{e.message}]")
         end
 
-        if master_account_id
+        # If we were able to load master account and we have role defined for sub account access, we can load
+        # a list of subaccounts
+        if master_account_id && sub_account_role
           begin
             paginated_query({:region => default_region}, :organizations_connection,
                             :accounts, :listing_keyword => "list").each do |account|
