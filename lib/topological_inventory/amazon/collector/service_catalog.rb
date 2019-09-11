@@ -5,7 +5,7 @@ module TopologicalInventory
         def service_offerings(scope)
           service_catalog_connection(scope).client.search_products_as_admin.product_view_details
         rescue => e
-          log.error("Couldn't fetch 'search_products_as_admin' of service catalog, message: #{e.message}")
+          logger.error("Couldn't fetch 'search_products_as_admin' of service catalog, message: #{e.message}")
           []
         end
 
@@ -57,28 +57,28 @@ module TopologicalInventory
           )
         rescue => e
           ident = {:product_id => product_id, :artifact_id => artifact_id, :launch_path_id => launch_path_id}
-          log.warn("Couldn't fetch 'describe_provisioning_parameters' of service catalog for #{ident}, message: #{e.message}")
+          logger.warn("Couldn't fetch 'describe_provisioning_parameters' of service catalog for #{ident}, message: #{e.message}")
           nil
         end
 
         def describe_product(product_id, scope)
           service_catalog_connection(scope).client.describe_product(:id => product_id).provisioning_artifacts
         rescue => e
-          log.warn("Couldn't fetch 'describe_product' of service catalog, message: #{e.message}")
+          logger.warn("Couldn't fetch 'describe_product' of service catalog, message: #{e.message}")
           []
         end
 
         def list_launch_paths(product_id, scope)
           service_catalog_connection(scope).client.list_launch_paths(:product_id => product_id).launch_path_summaries
         rescue => e
-          log.warn("Couldn't fetch 'list_launch_paths' of service catalog, message: #{e.message}")
+          logger.warn("Couldn't fetch 'list_launch_paths' of service catalog, message: #{e.message}")
           []
         end
 
         def describe_record(record_id, scope)
           service_catalog_connection(scope).client.describe_record(:id => record_id)
         rescue => e
-          log.warn("Couldn't fetch 'describe_record' of service catalog, message: #{e.message}")
+          logger.warn("Couldn't fetch 'describe_record' of service catalog, message: #{e.message}")
           nil
         end
       end

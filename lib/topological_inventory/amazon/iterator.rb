@@ -1,5 +1,7 @@
 module TopologicalInventory::Amazon
   class Iterator
+    include Logging
+
     attr_reader :block, :error_message, :log
 
     def initialize(blk, error_message)
@@ -13,7 +15,7 @@ module TopologicalInventory::Amazon
         yield(entity)
       end
     rescue => e
-      log.warn("#{error_message}. Message: #{e.message}")
+      logger.warn("#{error_message}. Message: #{e.message}")
       []
     end
   end
