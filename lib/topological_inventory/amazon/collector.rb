@@ -43,7 +43,7 @@ module TopologicalInventory
             accounts = list_accounts
 
             # Scan accounts first, to see which are accessible and use only those
-            accounts.delete_if {|account| !valid_account?(default_region, account)}
+            accounts.delete_if { |account| !valid_account?(default_region, account) }
 
             entity_types.each do |entity_type|
               process_entity(entity_type, regions, accounts)
@@ -104,7 +104,7 @@ module TopologicalInventory
 
       def build_scope(region, account)
         scope = {:region => region}.merge(account)
-        if !account[:master]
+        unless account[:master]
           # If account is not master, lets try to assume role
           scope[:sub_account_role_arn] = "arn:aws:iam::#{account[:account_id]}:role/#{sub_account_role}"
         end
@@ -194,10 +194,10 @@ module TopologicalInventory
         true
       rescue Aws::STS::Errors::AccessDenied => e
         logger.warn("Skipping account #{account}, couldn't switch to role '#{sub_account_role}', error: [#{e.class}, #{e.message}]")
-        return false
+        false
       rescue => e
         logger.warn("Skipping account #{account}, error: [#{e.class}, #{e.message}]")
-        return false
+        false
       end
 
       def service_catalog_connection(scope)
@@ -234,7 +234,7 @@ module TopologicalInventory
 
       def paginated_query(scope, connection, collection_name, listing_keyword: "describe")
         func = lambda do |&blk|
-          send(connection, scope).client.public_send("#{listing_keyword}_#{collection_name.to_s}").each do |result|
+          send(connection, scope).client.public_send("#{listing_keyword}_#{collection_name}").each do |result|
             result.public_send(collection_name).each do |item|
               blk.call(item, scope)
             end

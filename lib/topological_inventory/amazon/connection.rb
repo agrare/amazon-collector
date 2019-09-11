@@ -3,42 +3,42 @@ module TopologicalInventory
     module Connection
       class << self
         def ec2(options)
-          open(options.merge(:service => :EC2))
+          connection(options.merge(:service => :EC2))
         end
 
         def cloud_formation(options)
-          open(options.merge(:service => :CloudFormation))
+          connection(options.merge(:service => :CloudFormation))
         end
 
         def pricing(options)
-          open(options.merge(:service => :Pricing))
+          connection(options.merge(:service => :Pricing))
         end
 
         def service_catalog(options)
-          open(options.merge(:service => :ServiceCatalog))
+          connection(options.merge(:service => :ServiceCatalog))
         end
 
         def elb(options)
-          open(options.merge(:service => :ElasticLoadBalancing))
+          connection(options.merge(:service => :ElasticLoadBalancing))
         end
 
         def s3(options)
-          open(options.merge(:service => :S3))
+          connection(options.merge(:service => :S3))
         end
 
         def sqs(options)
-          open(options.merge(:service => :SQS))
+          connection(options.merge(:service => :SQS))
         end
 
         def sns(options)
-          open(options.merge(:service => :SNS))
+          connection(options.merge(:service => :SNS))
         end
 
         def organizations(options)
-          open(options.merge(:service => :Organizations))
+          connection(options.merge(:service => :Organizations))
         end
 
-        def open(options = {})
+        def connection(options = {})
           access_key_id        = options[:access_key_id]
           secret_access_key    = options[:secret_access_key]
           service              = options[:service]
@@ -46,14 +46,15 @@ module TopologicalInventory
           proxy_uri            = options[:proxy_uri]
           sub_account_role_arn = options[:sub_account_role_arn]
 
-          raw_connect(access_key_id, secret_access_key, service, region, :proxy_uri => proxy_uri,
+          raw_connect(access_key_id, secret_access_key, service, region,
+                      :proxy_uri            => proxy_uri,
                       :sub_account_role_arn => sub_account_role_arn)
         end
 
         private
 
         def raw_connect(access_key_id, secret_access_key, service, region, proxy_uri: nil,
-                        validate: false, uri: nil, sub_account_role_arn: nil)
+                        uri: nil, sub_account_role_arn: nil)
           require "aws-sdk-ec2"
           require "aws-sdk-cloudformation"
           require "aws-sdk-pricing"
