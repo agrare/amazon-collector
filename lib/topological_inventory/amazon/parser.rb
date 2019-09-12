@@ -8,6 +8,7 @@ require "topological_inventory/amazon/parser/flavor"
 require "topological_inventory/amazon/parser/floating_ip"
 require "topological_inventory/amazon/parser/network"
 require "topological_inventory/amazon/parser/network_adapter"
+require "topological_inventory/amazon/parser/reservation"
 require "topological_inventory/amazon/parser/security_group"
 require "topological_inventory/amazon/parser/subnet"
 require "topological_inventory/amazon/parser/vm"
@@ -29,6 +30,7 @@ module TopologicalInventory
       include Parser::FloatingIp
       include Parser::Network
       include Parser::NetworkAdapter
+      include Parser::Reservation
       include Parser::SecurityGroup
       include Parser::Subnet
       include Parser::Vm
