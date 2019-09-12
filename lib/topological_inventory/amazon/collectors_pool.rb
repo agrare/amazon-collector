@@ -28,7 +28,8 @@ module TopologicalInventory::Amazon
     end
 
     def new_collector(source, secret)
-      TopologicalInventory::Amazon::Collector.new(source.source, secret['username'], secret['password'], metrics)
+      # TODO(lsmola) pass correct sub_account_role from source's extra
+      TopologicalInventory::Amazon::Collector.new(source.source, secret['username'], secret['password'], nil, metrics)
     end
   end
 end
