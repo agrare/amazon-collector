@@ -24,6 +24,7 @@ end
 # Collector
 gem "aws-sdk-ec2", "~>1.102.0"
 gem "aws-sdk-cloudformation", "~>1.25.0"
+gem "aws-sdk-organizations", "~>1.32.0"
 gem "aws-sdk-pricing", "~>1.15.0"
 gem "aws-sdk-servicecatalog", "~>1.32.0"
 

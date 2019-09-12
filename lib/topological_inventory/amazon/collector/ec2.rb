@@ -4,7 +4,7 @@ module TopologicalInventory
       module Ec2
         def source_regions(scope)
           # We want to collect this for only default region, since all regions return the same result
-          return [] unless scope[:region] == default_region
+          return [] unless scope[:region] == default_region && scope[:master]
 
           paginated_query(scope, :ec2_connection, :regions)
         end

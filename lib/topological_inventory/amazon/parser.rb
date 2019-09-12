@@ -3,6 +3,7 @@ require "topological_inventory/amazon/parser/source_region"
 require "topological_inventory/amazon/parser/service_offering"
 require "topological_inventory/amazon/parser/service_plan"
 require "topological_inventory/amazon/parser/service_instance"
+require "topological_inventory/amazon/parser/subscription"
 require "topological_inventory/amazon/parser/flavor"
 require "topological_inventory/amazon/parser/floating_ip"
 require "topological_inventory/amazon/parser/network"
@@ -23,6 +24,7 @@ module TopologicalInventory
       include Parser::ServiceOffering
       include Parser::ServicePlan
       include Parser::ServiceInstance
+      include Parser::Subscription
       include Parser::Flavor
       include Parser::FloatingIp
       include Parser::Network
@@ -75,6 +77,12 @@ module TopologicalInventory
           :reference                 => reference,
           :ref                       => ref,
         )
+      end
+
+      def lazy_find_subscription(scope)
+        if scope[:account_id]
+          lazy_find(:subscriptions, :source_ref => scope[:account_id])
+        end
       end
 
       def get_from_tags(tags, tag_name)

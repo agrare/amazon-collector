@@ -13,20 +13,23 @@ module TopologicalInventory
 
       require "topological_inventory/amazon/collector/cloud_formation"
       require "topological_inventory/amazon/collector/ec2"
+      require "topological_inventory/amazon/collector/organizations"
       require "topological_inventory/amazon/collector/pricing"
       require "topological_inventory/amazon/collector/service_catalog"
 
       include Amazon::Collector::CloudFormation
       include Amazon::Collector::Ec2
+      include Amazon::Collector::Organizations
       include Amazon::Collector::Pricing
       include Amazon::Collector::ServiceCatalog
 
-      def initialize(source, access_key_id, secret_access_key, metrics, default_limit: 1_000, poll_time: 5)
+      def initialize(source, access_key_id, secret_access_key, sub_account_role, metrics, default_limit: 1_000, poll_time: 5)
         super(source,
               :default_limit => default_limit,
               :poll_time     => poll_time)
 
         self.secret_access_key = secret_access_key
+        self.sub_account_role  = sub_account_role
         self.access_key_id     = access_key_id
         self.metrics           = metrics
       end
@@ -34,8 +37,16 @@ module TopologicalInventory
       def collect!
         until finished?
           begin
+            # TODO(lsmola): should we list regions per account? Each account can have different regions allowed. Also
+            # right now we fetch regions of each account when checking access, so we can just load them
+            regions  = list_regions
+            accounts = list_accounts
+
+            # Scan accounts first, to see which are accessible and use only those
+            accounts.delete_if { |account| !valid_account?(default_region, account) }
+
             entity_types.each do |entity_type|
-              process_entity(entity_type)
+              process_entity(entity_type, regions, accounts)
             end
           rescue => e
             logger.error(e)
@@ -48,9 +59,9 @@ module TopologicalInventory
 
       private
 
-      attr_accessor :log, :metrics, :secret_access_key, :access_key_id
+      attr_accessor :log, :metrics, :secret_access_key, :access_key_id, :sub_account_role
 
-      def process_entity(entity_type)
+      def process_entity(entity_type, regions, accounts)
         parser      = create_parser
         total_parts = 0
         sweep_scope = Set.new([entity_type.to_sym])
@@ -59,15 +70,18 @@ module TopologicalInventory
         logger.info("Collecting #{entity_type} with :refresh_state_uuid => '#{refresh_state_uuid}'...")
 
         count = 0
-        ec2_connection(:region => default_region).client.describe_regions.regions.each do |region|
-          scope = {:region => region.region_name}
 
-          # Collect, parse and save entity data
-          parser, count, total_parts, sweep_scope = save_entity(entity_type, refresh_state_uuid, parser, scope, count, total_parts, sweep_scope)
+        accounts.each do |account|
+          regions.each do |region|
+            scope = build_scope(region, account)
 
-          # Collect, parse and save related entities data, if there are any
-          (related_entities[entity_type.to_sym] || []).each do |related_entity_type|
-            parser, count, total_parts, sweep_scope = save_entity(related_entity_type, refresh_state_uuid, parser, scope, count, total_parts, sweep_scope)
+            # Collect, parse and save entity data
+            parser, count, total_parts, sweep_scope = save_entity(entity_type, refresh_state_uuid, parser, scope, count, total_parts, sweep_scope)
+
+            # Collect, parse and save related entities data, if there are any
+            (related_entities[entity_type.to_sym] || []).each do |related_entity_type|
+              parser, count, total_parts, sweep_scope = save_entity(related_entity_type, refresh_state_uuid, parser, scope, count, total_parts, sweep_scope)
+            end
           end
         end
 
@@ -88,9 +102,29 @@ module TopologicalInventory
         logger.info("Sweeping inactive records for #{sweep_scope} with :refresh_state_uuid => '#{refresh_state_uuid}'...Complete")
       end
 
+      def build_scope(region, account)
+        scope = {:region => region}.merge(account)
+        unless account[:master]
+          # If account is not master, lets try to assume role
+          scope[:sub_account_role_arn] = "arn:aws:iam::#{account[:account_id]}:role/#{sub_account_role}"
+        end
+        scope
+      end
+
+      def list_accounts
+        subscriptions(:region => default_region, :master => true)
+      end
+
+      def list_regions
+        ec2_connection(:region => default_region).client.describe_regions.regions.map(&:region_name)
+      end
+
       # Collect, parse and save entity data
-      def save_entity(entity_type, refresh_state_uuid, parser, scope, count, total_parts, sweep_scope)
-        send(entity_type.to_s, scope).each do |entity|
+      def save_entity(entity_type, refresh_state_uuid, parser, scope, count, total_parts, sweep_scope, entities_iterator: nil)
+        iterator = entities_iterator
+        iterator ||= send(entity_type.to_s, scope)
+
+        iterator.each do |entity|
           count += 1
           parser.send("parse_#{entity_type}", entity, scope)
 
@@ -119,6 +153,14 @@ module TopologicalInventory
         Parser.new
       end
 
+      def endpoint_types
+        %w(organizations pricing ec2 service_catalog)
+      end
+
+      def organizations_entity_types
+        %w(subscriptions)
+      end
+
       def cloud_formations_entity_types
         %w(orchestrations_stacks)
       end
@@ -129,10 +171,6 @@ module TopologicalInventory
 
       def service_catalog_entity_types
         %w(service_offerings service_instances service_plans)
-      end
-
-      def endpoint_types
-        %w(pricing ec2 service_catalog)
       end
 
       def pricing_entity_types
@@ -148,6 +186,18 @@ module TopologicalInventory
 
       def connection_attributes
         {:access_key_id => access_key_id, :secret_access_key => secret_access_key}
+      end
+
+      def valid_account?(region, account)
+        scope = build_scope(region, account)
+        ec2_connection(scope).client.describe_regions.regions.map(&:region_name)
+        true
+      rescue Aws::STS::Errors::AccessDenied => e
+        logger.warn("Skipping account #{account}, couldn't switch to role '#{sub_account_role}', error: [#{e.class}, #{e.message}]")
+        false
+      rescue => e
+        logger.warn("Skipping account #{account}, error: [#{e.class}, #{e.message}]")
+        false
       end
 
       def service_catalog_connection(scope)
@@ -166,6 +216,10 @@ module TopologicalInventory
         Connection.cloud_formation(connection_attributes.merge(scope))
       end
 
+      def organizations_connection(scope)
+        Connection.organizations(connection_attributes.merge(scope))
+      end
+
       def ingress_api_client
         TopologicalInventoryIngressApiClient::DefaultApi.new
       end
@@ -178,9 +232,9 @@ module TopologicalInventory
         "Amazon"
       end
 
-      def paginated_query(scope, connection, collection_name)
+      def paginated_query(scope, connection, collection_name, listing_keyword: "describe")
         func = lambda do |&blk|
-          send(connection, scope).client.public_send("describe_#{collection_name.to_s}").each do |result|
+          send(connection, scope).client.public_send("#{listing_keyword}_#{collection_name}").each do |result|
             result.public_send(collection_name).each do |item|
               blk.call(item, scope)
             end

@@ -20,6 +20,7 @@ module TopologicalInventory::Amazon
             :private_ip_address => ip.private_ip_address,
           },
           :source_region       => lazy_find(:source_regions, :source_ref => scope[:region]),
+          :subscription        => lazy_find_subscription(scope),
           :orchestration_stack => stack,
           :network_adapter     => network_adapter,
         )

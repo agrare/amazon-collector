@@ -22,6 +22,7 @@ module TopologicalInventory::Amazon
           :service_offering  => service_offering,
           :service_plan      => service_plan,
           :source_region     => lazy_find(:source_regions, :source_ref => scope[:region]),
+          :subscription      => lazy_find_subscription(scope),
           :extra             => {
             :arn                 => service_instance.arn,
             :type                => service_instance.type,

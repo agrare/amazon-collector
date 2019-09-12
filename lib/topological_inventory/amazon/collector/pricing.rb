@@ -21,7 +21,7 @@ module TopologicalInventory
         def flavors(scope)
           # TODO(lsmola) should we have flavor per region? Are there region specific flavors?
           # We want to collect this for only default region, since all regions return the same result
-          return [] unless scope[:region] == default_region
+          return [] unless scope[:region] == default_region && scope[:master]
 
           func = lambda do |&blk|
             result = flavors_query(scope)
@@ -36,13 +36,13 @@ module TopologicalInventory
               result = flavors_query(scope, :next_token => result.next_token)
             end
           end
-          Iterator.new(func, "Couldn't fetch 'flavors' from Aws::Pricing.")
+          Iterator.new(func, "Couldn't fetch 'flavors' from Aws::Pricing with scope #{scope}.")
         end
 
         def volume_types(scope)
           # TODO(lsmola) should we have volume_type per region? Are there region specific volume types?
           # We want to collect this for only default region, since all regions return the same result
-          return [] unless scope[:region] == default_region
+          return [] unless scope[:region] == default_region && scope[:master]
 
           func = lambda do |&blk|
             result = volume_types_query(scope)
@@ -57,7 +57,7 @@ module TopologicalInventory
               result = volume_types_query(scope, :next_token => result.next_token)
             end
           end
-          Iterator.new(func, "Couldn't fetch 'volume_types' from Aws::Pricing.")
+          Iterator.new(func, "Couldn't fetch 'volume_types' from Aws::Pricing with scope #{scope}.")
         end
 
         private

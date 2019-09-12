@@ -18,6 +18,7 @@ module TopologicalInventory::Amazon
           :source_created_at  => nil,
           :create_json_schema => nil,
           :source_region      => lazy_find(:source_regions, :source_ref => scope[:region]),
+          :subscription       => lazy_find_subscription(scope),
           :extra              => {
             :artifact                         => artifact,
             :launch_path                      => launch_path,

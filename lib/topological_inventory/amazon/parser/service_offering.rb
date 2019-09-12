@@ -8,6 +8,7 @@ module TopologicalInventory::Amazon
           :description       => nil,
           :source_created_at => service_offering.created_time,
           :source_region     => lazy_find(:source_regions, :source_ref => scope[:region]),
+          :subscription      => lazy_find_subscription(scope),
           :extra             => {
             :product_view_summary => service_offering.product_view_summary,
             :status               => service_offering.status,
