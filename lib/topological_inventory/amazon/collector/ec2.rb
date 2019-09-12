@@ -61,6 +61,10 @@ module TopologicalInventory
         def floating_ips(scope)
           paginated_query(scope, :ec2_connection, :addresses)
         end
+
+        def reservations(scope)
+          paginated_query(scope, :ec2_connection, :reserved_instances)
+        end
       end
     end
   end

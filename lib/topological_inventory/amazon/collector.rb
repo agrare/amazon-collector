@@ -166,7 +166,7 @@ module TopologicalInventory
       end
 
       def ec2_entity_types
-        %w(source_regions vms volumes networks subnets security_groups)
+        %w(reservations source_regions vms volumes networks subnets security_groups)
       end
 
       def service_catalog_entity_types
@@ -232,9 +232,15 @@ module TopologicalInventory
         "Amazon"
       end
 
-      def paginated_query(scope, connection, collection_name, listing_keyword: "describe")
+      def paginated_query(scope, connection, collection_name, listing_keyword: "describe", params: nil)
         func = lambda do |&blk|
-          send(connection, scope).client.public_send("#{listing_keyword}_#{collection_name}").each do |result|
+          query = if params
+                    send(connection, scope).client.public_send("#{listing_keyword}_#{collection_name.to_s}", params)
+                  else
+                    send(connection, scope).client.public_send("#{listing_keyword}_#{collection_name.to_s}")
+                  end
+
+          query.each do |result|
             result.public_send(collection_name).each do |item|
               blk.call(item, scope)
             end
