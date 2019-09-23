@@ -1,26 +1,24 @@
-require "active_support/inflector"
-require "topological_inventory/amazon/parser/source_region"
-require "topological_inventory/amazon/parser/service_offering"
-require "topological_inventory/amazon/parser/service_plan"
-require "topological_inventory/amazon/parser/service_instance"
-require "topological_inventory/amazon/parser/subscription"
-require "topological_inventory/amazon/parser/flavor"
-require "topological_inventory/amazon/parser/floating_ip"
-require "topological_inventory/amazon/parser/network"
-require "topological_inventory/amazon/parser/network_adapter"
-require "topological_inventory/amazon/parser/reservation"
-require "topological_inventory/amazon/parser/security_group"
-require "topological_inventory/amazon/parser/subnet"
-require "topological_inventory/amazon/parser/vm"
-require "topological_inventory/amazon/parser/volume"
-require "topological_inventory/amazon/parser/volume_type"
-require "topological_inventory-ingress_api-client"
-require "topological_inventory-ingress_api-client/collector.rb"
-require "topological_inventory-ingress_api-client/collector/inventory_collection_storage.rb"
+require "topological_inventory/providers/common/collector/parser"
 
 module TopologicalInventory
   module Amazon
-    class Parser
+    class Parser < TopologicalInventory::Providers::Common::Collector::Parser
+      require "topological_inventory/amazon/parser/source_region"
+      require "topological_inventory/amazon/parser/service_offering"
+      require "topological_inventory/amazon/parser/service_plan"
+      require "topological_inventory/amazon/parser/service_instance"
+      require "topological_inventory/amazon/parser/flavor"
+      require "topological_inventory/amazon/parser/floating_ip"
+      require "topological_inventory/amazon/parser/network"
+      require "topological_inventory/amazon/parser/network_adapter"
+      require "topological_inventory/amazon/parser/reservation"
+      require "topological_inventory/amazon/parser/security_group"
+      require "topological_inventory/amazon/parser/subnet"
+      require "topological_inventory/amazon/parser/subscription"
+      require "topological_inventory/amazon/parser/vm"
+      require "topological_inventory/amazon/parser/volume"
+      require "topological_inventory/amazon/parser/volume_type"
+
       include Parser::SourceRegion
       include Parser::ServiceOffering
       include Parser::ServicePlan
@@ -37,12 +35,11 @@ module TopologicalInventory
       include Parser::Volume
       include Parser::VolumeType
 
-      attr_accessor :connection, :collections, :resource_timestamp
+      attr_accessor :connection
 
       def initialize(connection = nil)
+        super()
         self.connection         = connection
-        self.resource_timestamp = Time.now.utc
-        self.collections = TopologicalInventoryIngressApiClient::Collector::InventoryCollectionStorage.new
       end
 
       private
@@ -71,14 +68,6 @@ module TopologicalInventory
       def archive_entity(inventory_object, entity)
         source_deleted_at                  = entity.metadata&.deletionTimestamp || Time.now.utc
         inventory_object.source_deleted_at = source_deleted_at
-      end
-
-      def lazy_find(collection, reference, ref: :manager_ref)
-        TopologicalInventoryIngressApiClient::InventoryObjectLazy.new(
-          :inventory_collection_name => collection,
-          :reference                 => reference,
-          :ref                       => ref,
-        )
       end
 
       def lazy_find_subscription(scope)
