@@ -9,15 +9,15 @@ module TopologicalInventory::Amazon
         stack    = lazy_find(:orchestration_stacks, :source_ref => stack_id) if stack_id
 
         vm = TopologicalInventoryIngressApiClient::Vm.new(
-          :source_ref           => uid,
-          :uid_ems              => uid,
-          :name                 => name,
-          :power_state          => parse_vm_power_state(instance.state),
-          :flavor               => flavor,
-          :mac_addresses        => parse_network(instance)[:mac_addresses],
-          :source_region        => lazy_find(:source_regions, :source_ref => scope[:region]),
-          :subscription         => lazy_find_subscription(scope),
-          :orchestration_stack  => stack,
+          :source_ref          => uid,
+          :uid_ems             => uid,
+          :name                => name,
+          :power_state         => parse_vm_power_state(instance.state),
+          :flavor              => flavor,
+          :mac_addresses       => parse_network(instance)[:mac_addresses],
+          :source_region       => lazy_find(:source_regions, :source_ref => scope[:region]),
+          :subscription        => lazy_find_subscription(scope),
+          :orchestration_stack => stack,
         )
 
         collections[:vms].data << vm
