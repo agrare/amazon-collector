@@ -14,7 +14,7 @@ module TopologicalInventory::Amazon
           :volume_type          => lazy_find(:volume_types, :source_ref => data.volume_type),
           :source_region        => lazy_find(:source_regions, :source_ref => scope[:region]),
           :subscription         => lazy_find_subscription(scope),
-          :orchestration_stacks => stack,
+          :orchestration_stack  => stack,
         )
 
         collections[:volumes].data << volume
