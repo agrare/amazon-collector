@@ -9,15 +9,15 @@ module TopologicalInventory::Amazon
         stack    = lazy_find(:orchestration_stacks, :source_ref => stack_id) if stack_id
 
         vm = TopologicalInventoryIngressApiClient::Vm.new(
-          :source_ref           => uid,
-          :uid_ems              => uid,
-          :name                 => name,
-          :power_state          => parse_vm_power_state(instance.state),
-          :flavor               => flavor,
-          :mac_addresses        => parse_network(instance)[:mac_addresses],
-          :source_region        => lazy_find(:source_regions, :source_ref => scope[:region]),
-          :subscription         => lazy_find_subscription(scope),
-          :orchestration_stacks => stack,
+          :source_ref          => uid,
+          :uid_ems             => uid,
+          :name                => name,
+          :power_state         => parse_vm_power_state(instance.state),
+          :flavor              => flavor,
+          :mac_addresses       => parse_network(instance)[:mac_addresses],
+          :source_region       => lazy_find(:source_regions, :source_ref => scope[:region]),
+          :subscription        => lazy_find_subscription(scope),
+          :orchestration_stack => stack,
         )
 
         collections[:vms].data << vm
@@ -62,10 +62,12 @@ module TopologicalInventory::Amazon
         return if instance.vpc_id
 
         collections[:network_adapters].data << TopologicalInventoryIngressApiClient::NetworkAdapter.new(
-          :source_ref    => instance.instance_id,
-          :mac_address   => nil,
-          :source_region => lazy_find(:source_regions, :source_ref => scope[:region]),
-          :device        => lazy_find(:vms, :source_ref => instance.instance_id),
+          :source_ref          => instance.instance_id,
+          :device              => lazy_find(:vms, :source_ref => instance.instance_id),
+          :mac_address         => nil,
+          :orchestration_stack => nil,
+          :source_region       => lazy_find(:source_regions, :source_ref => scope[:region]),
+          :subscription        => nil
         )
 
         collections[:ipaddresses].data << TopologicalInventoryIngressApiClient::Ipaddress.new(

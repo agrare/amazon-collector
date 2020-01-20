@@ -1,6 +1,7 @@
 module TopologicalInventory::Amazon
   class Parser
     module NetworkAdapter
+      # Network adapters also added by *parse_vms*
       def parse_network_adapters(interface, scope)
         stack_id = get_from_tags(interface.tag_set, "aws:cloudformation:stack-id")
         stack    = lazy_find(:orchestration_stacks, :source_ref => stack_id) if stack_id
@@ -23,7 +24,7 @@ module TopologicalInventory::Amazon
             :status            => interface.status,
             :requester_id      => interface.requester_id,
             :requester_managed => interface.requester_managed,
-            :source_dest_check => interface.source_dest_check,
+            :source_dest_check => interface.source_dest_check
           },
           :source_region       => lazy_find(:source_regions, :source_ref => scope[:region]),
           :subscription        => lazy_find_subscription(scope),
