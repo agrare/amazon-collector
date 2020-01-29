@@ -6,7 +6,7 @@ module TopologicalInventory::Amazon
   class CollectorsPool < TopologicalInventory::Providers::Common::CollectorsPool
     include Logging
 
-    def initialize(config_name, metrics, poll_time: 10)
+    def initialize(config_name, metrics)
       super
     end
 
@@ -29,7 +29,7 @@ module TopologicalInventory::Amazon
 
     def new_collector(source, secret)
       # TODO(lsmola) pass correct sub_account_role from source's extra
-      TopologicalInventory::Amazon::Collector.new(source.source, secret['username'], secret['password'], nil, metrics)
+      TopologicalInventory::Amazon::Collector.new(source.source, secret['username'], secret['password'], nil, metrics, :standalone_mode => false)
     end
   end
 end

@@ -22,10 +22,12 @@ module TopologicalInventory
       include Amazon::Collector::Pricing
       include Amazon::Collector::ServiceCatalog
 
-      def initialize(source, access_key_id, secret_access_key, sub_account_role, metrics, default_limit: 1_000, poll_time: 5)
+      def initialize(source, access_key_id, secret_access_key, sub_account_role, metrics,
+                     default_limit: 1_000, poll_time: 30, standalone_mode: true)
         super(source,
-              :default_limit => default_limit,
-              :poll_time     => poll_time)
+              :default_limit   => default_limit,
+              :poll_time       => poll_time,
+              :standalone_mode => standalone_mode)
 
         self.secret_access_key = secret_access_key
         self.sub_account_role  = sub_account_role
@@ -51,7 +53,7 @@ module TopologicalInventory
             logger.error(e)
             metrics.record_error
           ensure
-            sleep(30)
+            standalone_mode ? sleep(poll_time) : stop
           end
         end
       end
