@@ -45,7 +45,9 @@ module TopologicalInventory
           endpoint_authentications = api_client.list_endpoint_authentications(endpoint.id.to_s).data || []
           return STATUS_UNAVAILABLE if endpoint_authentications.empty?
 
-          auth_id = endpoint_authentications.first.id
+          auth_id = endpoint_authentications.detect { |a| a.authtype == "access_key_secret_key" }&.id
+          return if auth_id.nil?
+
           auth = Core::AuthenticationRetriever.new(auth_id, identity).process
           return STATUS_UNAVAILABLE unless auth
 
